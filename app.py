@@ -30,7 +30,7 @@ from forms import RegistrationForm, LoginForm
 
 @app.route('/')
 def home():
-    return 'Welcome to FitQuest!'
+    return render_template('base.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
