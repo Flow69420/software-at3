@@ -7,6 +7,16 @@
 </head>
 <body>
     <h1>{% block heading %}Welcome to FitQuest{% endblock %}</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="flash {{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+        
     {% block content %}
     {% endblock %}
 </body>

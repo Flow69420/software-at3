@@ -12,6 +12,16 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 from forms import RegistrationForm, LoginForm
 
 # with app.app_context():
@@ -38,8 +48,16 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.password == form.password.data:
+            login_user(user)
             flash('Login successful!', 'success')
             return redirect(url_for('home'))
         else:
             flash('Login failed. Check your email and password.', 'danger')
     return render_template('login.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('home'))
