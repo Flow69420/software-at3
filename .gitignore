@@ -11,10 +11,7 @@ venv/
 # SQLite database
 *.db
 
-# Flask-Migrate migrations
-migrations/
-
-# VS Code settings (optional)
+# VS Code settings
 .vscode/
 
 # Environment variables
