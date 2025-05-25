@@ -12,6 +12,7 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 login_manager = LoginManager()
@@ -35,7 +36,8 @@ def home():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, password=form.password.data)
+        hashed_pw = generate_password_hash(form.password.data)
+        user = User(username=form.username.data, email=form.email.data, password=hashed_pw)
         db.session.add(user)
         db.session.commit()
         flash('Registration successful!', 'success')
@@ -47,7 +49,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and user.password == form.password.data:
+        if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             flash('Login successful!', 'success')
             return redirect(url_for('home'))
