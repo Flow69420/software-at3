@@ -1,0 +1,89 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.background {
+    background: linear-gradient(135deg, #cbbf11, #fc7425);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.glass-input {
+    width: 20rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-top: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: black;
+}
+
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+label {
+  color: black;
+  font-size:larger;
+  font-weight: 750;
+  display: block;
+  margin-bottom: -1rem;
+}
+
+.glass-button {
+  width: 10rem;
+  padding: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  color: black;
+  font-weight: 600;
+}
+
+.glass-button:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.glass-input,
+.glass-button {
+  transition: all 0.3s ease;
+}
+.glass-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.error {
+  color: #ffaaaa;
+  font-size: 0.875rem;
+}
