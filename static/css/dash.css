@@ -98,6 +98,54 @@ body, html {
   color: #000;
 }
 
+.sidebar-button.dropdown-toggle.open,
+.sidebar-dropdown .dropdown-menu.open ~ .sidebar-button.dropdown-toggle,
+.sidebar-dropdown .dropdown-toggle.open {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  color: #000;
+}
+
+.sidebar-dropdown {
+  width: 100%;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.dropdown-menu.open {
+  max-height: 500px; /* adjust as needed */
+  opacity: 1;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #222;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #000;
+}
+
 .logout-button {
   background: rgba(255, 100, 100, 0.2);
 }
@@ -107,6 +155,7 @@ body, html {
   color: #000;
 }
 
+
 .main {
   flex: 1;
   background: white;
@@ -114,8 +163,34 @@ body, html {
   overflow-y: auto;
 }
 
-.main h1 {
-  color: #222;
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+
+.main-sections {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+
+.main-card {
+  flex: 1 1 45%;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.main-card h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.main-card p {
+  color: #555;
 }
