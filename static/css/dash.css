@@ -1,0 +1,121 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+  width: 15%;
+  height: 100%;
+  background: linear-gradient(135deg, #fdf542, #f9530b);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.sidebar-island {
+  width: 90%;
+  height: 100%;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.profile-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profile-name {
+  font-weight: 700;
+  color: #222;
+}
+
+.profile-email {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.sidebar-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+}
+
+.sidebar-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.sidebar-button {
+  display: block;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: #222;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 8px;
+  text-align: center;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  color: #000;
+}
+
+.logout-button {
+  background: rgba(255, 100, 100, 0.2);
+}
+
+.logout-button:hover {
+  background: rgba(255, 100, 100, 0.4);
+  color: #000;
+}
+
+.main {
+  flex: 1;
+  background: white;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.main h1 {
+  color: #222;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}

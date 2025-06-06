@@ -41,7 +41,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Registration successful!', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -52,7 +52,7 @@ def login():
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             flash('Login successful!', 'success')
-            return redirect(url_for('home'))
+            return redirect(url_for('dashboard'))
         else:
             flash('Login failed. Check your email and password.', 'danger')
     return render_template('login.html', form=form)
@@ -63,3 +63,8 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('home'))
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html', username=current_user.username, email=current_user.email)
