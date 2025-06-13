@@ -2,10 +2,11 @@ body, html {
     height: 100%;
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #28282B;
 }
 
 .background {
-    background: linear-gradient(135deg, #fdf542, #f9530b);
+    background: #ff9966;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -42,7 +43,7 @@ body, html {
     font-size: 1rem;
     margin-top: 0.25rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    color: black;
+    color: #28282B;
 }
 
 .glass-input::placeholder {
@@ -61,7 +62,7 @@ body, html {
 }
 
 label {
-  color: black;
+  color: #28282B;
   font-size:larger;
   font-weight: 750;
   display: block;
@@ -78,7 +79,7 @@ label {
   cursor: pointer;
   transition: background 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: black;
+  color: #28282B;
   font-weight: 750;
 }
 

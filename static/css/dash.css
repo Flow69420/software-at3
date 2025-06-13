@@ -12,7 +12,7 @@ body, html {
 .sidebar {
   width: 15%;
   height: 100%;
-  background: linear-gradient(135deg, #fdf542, #f9530b);
+  background: #ff9966;
   color: white;
   padding: 1.5rem;
   display: flex;
@@ -90,12 +90,14 @@ body, html {
   border-radius: 8px;
   text-align: center;
   transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  border: 1px solid rgba(0,0,0,0.07);
 }
 
 .sidebar-button:hover {
   background: rgba(0, 0, 0, 0.04);
   transform: translateY(-1px);
   color: #000;
+  border: 1px solid rgba(0,0,0,0.18);
 }
 
 .sidebar-button.dropdown-toggle.open,
@@ -104,6 +106,7 @@ body, html {
   background: rgba(0, 0, 0, 0.04);
   transform: translateY(-1px);
   color: #000;
+  border: 1px solid rgba(0,0,0,0.18);
 }
 
 .sidebar-dropdown {
@@ -148,11 +151,13 @@ body, html {
 
 .logout-button {
   background: rgba(255, 100, 100, 0.2);
+  border: 1px solid rgba(255, 100, 100, 0.18);
 }
 
 .logout-button:hover {
   background: rgba(255, 100, 100, 0.4);
   color: #000;
+  border: 1px solid rgba(255, 100, 100, 0.35);
 }
 
 
