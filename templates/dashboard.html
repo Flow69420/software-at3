@@ -35,9 +35,9 @@
         </div>
     </div>
     <div class="main">
+        {% if active_section == 'home' %}
         <h1>Hello {{ username }}!</h1>
         <div class="main-sections">
-            {% if active_section == 'home' %}
                 <div class="main-card">
                     <h2>Workouts</h2>
                     <p>Here you can track your recent workouts and start new ones.</p>
@@ -47,12 +47,31 @@
                     <p>Your progress and stats will appear here.</p>
                 </div>
             {% elif active_section == 'workouts' %}
-                <div class="main-card">
-                    <h2>Workouts</h2>
-                    <p>This is the workouts page. List, create, and manage workouts here.</p>
+                <div class="main-sections center-content">
+                    <div class="workout-section">
+                        <h1>Workouts</h1>
+                        <button id="openWorkoutModal" class="sidebar-button">+ Create Workout</button>
+                        <p>This is the workouts page. List, create, and manage workouts here.</p>
+
+                        <div id="workoutModal" class="modal" style="display:none;">
+                            <div class="modal-content">
+                                <span class="close" id="closeWorkoutModal">&times;</span>
+                                <h2>Create Workout</h2>
+                                <form method="POST" action="{{ url_for('create_workout') }}">
+                                    {{ workout_form.hidden_tag() }}
+                                    <div>{{ workout_form.name.label }} {{ workout_form.name() }}</div>
+                                    <div>{{ workout_form.type.label }} {{ workout_form.type() }}</div>
+                                    <div>{{ workout_form.duration.label }} {{ workout_form.duration() }}</div>
+                                    <div>{{ workout_form.difficulty.label }} {{ workout_form.difficulty() }}</div>
+                                    <div>{{ workout_form.description.label }} {{ workout_form.description() }}</div>
+                                    <div>{{ workout_form.submit() }}</div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
         </div>
+        {% endif %}
     </div>
 </div>
 {% if active_section == 'workouts' %}
@@ -62,6 +81,21 @@ function toggleDropdown() {
     const toggleBtn = document.querySelector('.dropdown-toggle');
     dropdown.classList.toggle('open');
     toggleBtn.classList.toggle('open');
+}
+
+document.getElementById('openWorkoutModal').onclick = function() {
+    document.getElementById('workoutModal').style.display = 'block';
+}
+
+document.getElementById('closeWorkoutModal').onclick = function() {
+    document.getElementById('workoutModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('workoutModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }
 </script>
 {% endif %}

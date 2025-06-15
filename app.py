@@ -23,7 +23,7 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, WorkoutForm
 
 # with app.app_context():
 #     db.create_all()
@@ -72,4 +72,15 @@ def dashboard():
 @app.route('/dashboard/workouts')
 @login_required
 def workouts():
-    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='workouts')
+    form = WorkoutForm()
+    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='workouts', workout_form=form)
+
+@app.route('/dashboard/workouts/create', methods=['POST'])
+@login_required
+def create_workout():
+    form = WorkoutForm()
+    if form.validate_on_submit():
+        flash('Workout created!', 'success')
+    else:
+        flash('Error creating workout.', 'danger')
+    return redirect(url_for('workouts'))
