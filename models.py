@@ -13,3 +13,40 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"<User {self.username}, {self.email}, {self.role}, {self.id}>"
+    
+class Workout(db.Model):
+    __tablename__ = 'workouts'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('workouts', lazy=True))
+    created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
+
+    def __repr__(self):
+        return f"<Workout {self.name}, User ID: {self.user_id}, Created At: {self.created_at}>"
+
+class Exercise(db.Model):
+    __tablename__ = 'exercises'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+    description = db.Column(db.String(256), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('exercises', lazy=True))
+
+    def __repr__(self):
+        return f"<Exercise {self.name}, User ID: {self.user_id}>"
+
+class WorkoutExercise(db.Model):
+    __tablename__ = 'workout_exercises'
+    id = db.Column(db.Integer, primary_key=True)
+    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'), nullable=False)
+    exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), nullable=False)
+    order = db.Column(db.Integer, nullable=False)
+    sets = db.Column(db.Integer, nullable=False, default=3)
+    reps = db.Column(db.Integer, nullable=False, default=10)
+    notes = db.Column(db.String(256), nullable=True)
+    workout = db.relationship('Workout', backref=db.backref('workout_exercises', lazy=True))
+    exercise = db.relationship('Exercise', backref=db.backref('workout_exercises', lazy=True))
+
+    def __repr__(self):
+        return f"<WorkoutExercise Workout ID: {self.workout_id}, Exercise ID: {self.exercise_id}, Order: {self.order}, Sets: {self.sets}, Reps: {self.reps}>"
