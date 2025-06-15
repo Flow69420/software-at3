@@ -8,9 +8,6 @@ __pycache__/
 .venv/
 venv/
 
-# SQLite database
-*.db
-
 # VS Code settings
 .vscode/
 
