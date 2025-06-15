@@ -16,39 +16,46 @@
             <div class="sidebar-divider"></div>
 
             <div class="sidebar-buttons">
-                    <div class="sidebar-dropdown">
-                        <div class="sidebar-button dropdown-toggle" onclick="toggleDropdown()">Workouts</div>
-                        <div class="dropdown-menu" id="workoutDropdown">
-                            <a href="" class="dropdown-item">Strength</a>
-                            <a href="" class="dropdown-item">Cardio</a>
-                            <a href="" class="dropdown-item">Flexibility</a>
+                <div class="sidebar-dropdown">
+                    {% if active_section == 'workouts' %}
+                        <div class="sidebar-button dropdown-toggle active" onclick="toggleDropdown()" id="workoutsSidebarBtn">
+                            Workouts
                         </div>
-                    </div>
-
+                        <div class="dropdown-menu" id="workoutDropdown">
+                            <a href="#" class="dropdown-item">Strength</a>
+                            <a href="#" class="dropdown-item">Cardio</a>
+                            <a href="#" class="dropdown-item">Flexibility</a>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('workouts') }}" class="sidebar-button" id="workoutsSidebarBtn">Workouts</a>
+                    {% endif %}
+                </div>
                 <a href="{{ url_for('logout') }}" class="sidebar-button logout-button">Logout</a>
             </div>
         </div>
     </div>
     <div class="main">
         <h1>Hello {{ username }}!</h1>
-
         <div class="main-sections">
-            <!-- Workouts Section -->
-            <div class="main-card">
-                <h2>Workouts</h2>
-                <p>Here you can track your recent workouts and start new ones.</p>
-                <!-- Placeholder content -->
-            </div>
-
-            <!-- Stats Section -->
-            <div class="main-card">
-                <h2>Stats</h2>
-                <p>Your progress and stats will appear here.</p>
-                <!-- Placeholder content -->
-            </div>
+            {% if active_section == 'home' %}
+                <div class="main-card">
+                    <h2>Workouts</h2>
+                    <p>Here you can track your recent workouts and start new ones.</p>
+                </div>
+                <div class="main-card">
+                    <h2>Stats</h2>
+                    <p>Your progress and stats will appear here.</p>
+                </div>
+            {% elif active_section == 'workouts' %}
+                <div class="main-card">
+                    <h2>Workouts</h2>
+                    <p>This is the workouts page. List, create, and manage workouts here.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+{% if active_section == 'workouts' %}
 <script>
 function toggleDropdown() {
     const dropdown = document.getElementById('workoutDropdown');
@@ -57,4 +64,5 @@ function toggleDropdown() {
     toggleBtn.classList.toggle('open');
 }
 </script>
+{% endif %}
 {% endblock %}

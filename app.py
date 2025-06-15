@@ -67,4 +67,9 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', username=current_user.username, email=current_user.email)
+    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='home')
+
+@app.route('/dashboard/workouts')
+@login_required
+def workouts():
+    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='workouts')
