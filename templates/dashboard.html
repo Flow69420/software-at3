@@ -52,22 +52,6 @@
                         <h1>Workouts</h1>
                         <button id="openWorkoutModal" class="sidebar-button">+ Create Workout</button>
                         <p>This is the workouts page. List, create, and manage workouts here.</p>
-
-                        <div id="workoutModal" class="modal" style="display:none;">
-                            <div class="modal-content">
-                                <span class="close" id="closeWorkoutModal">&times;</span>
-                                <h2>Create Workout</h2>
-                                <form method="POST" action="{{ url_for('create_workout') }}">
-                                    {{ workout_form.hidden_tag() }}
-                                    <div>{{ workout_form.name.label }} {{ workout_form.name() }}</div>
-                                    <div>{{ workout_form.type.label }} {{ workout_form.type() }}</div>
-                                    <div>{{ workout_form.duration.label }} {{ workout_form.duration() }}</div>
-                                    <div>{{ workout_form.difficulty.label }} {{ workout_form.difficulty() }}</div>
-                                    <div>{{ workout_form.description.label }} {{ workout_form.description() }}</div>
-                                    <div>{{ workout_form.submit() }}</div>
-                                </form>
-                            </div>
-                        </div>
                     </div>
                 </div>
         </div>
@@ -75,6 +59,22 @@
     </div>
 </div>
 {% if active_section == 'workouts' %}
+
+<div id="workoutModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" id="closeWorkoutModal">&times;</span>
+        <h2>Create Workout</h2>
+        <form method="POST" action="{{ url_for('create_workout') }}">
+            {{ workout_form.hidden_tag() }}
+            <div>{{ workout_form.name.label }} {{ workout_form.name() }}</div>
+            <div>{{ workout_form.type.label }} {{ workout_form.type() }}</div>
+            <div>{{ workout_form.duration.label }} {{ workout_form.duration() }}</div>
+            <div>{{ workout_form.difficulty.label }} {{ workout_form.difficulty() }}</div>
+            <div>{{ workout_form.description.label }} {{ workout_form.description() }}</div>
+            <div>{{ workout_form.submit() }}</div>
+        </form>
+    </div>
+</div>
 <script>
 function toggleDropdown() {
     const dropdown = document.getElementById('workoutDropdown');
@@ -84,7 +84,7 @@ function toggleDropdown() {
 }
 
 document.getElementById('openWorkoutModal').onclick = function() {
-    document.getElementById('workoutModal').style.display = 'block';
+    document.getElementById('workoutModal').style.display = 'flex';
 }
 
 document.getElementById('closeWorkoutModal').onclick = function() {

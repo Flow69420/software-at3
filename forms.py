@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 class RegistrationForm(FlaskForm):
@@ -19,7 +19,7 @@ class WorkoutForm(FlaskForm):
     type = SelectField('Workout Type', choices=[('strength', 'Strength'), ('cardio', 'Cardio'), ('flexibility', 'Flexibility')], validators=[DataRequired()])
     duration = IntegerField('Duration (minutes)', validators=[DataRequired()])
     difficulty = SelectField('Difficulty', choices=[('', 'Select'), ('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced')], validators=[])
-    description = StringField('Description', validators=[Length(max=256)])
+    description = TextAreaField('Description', validators=[Length(max=256)])
     submit = SubmitField('Add Workout')
 
 class ExerciseForm(FlaskForm):
