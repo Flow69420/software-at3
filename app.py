@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -73,14 +73,21 @@ def dashboard():
 @login_required
 def workouts():
     form = WorkoutForm()
-    user_workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.created_at.desc()).all()
+    workout_type = request.args.get('type')
+    query = Workout.query.filter_by(user_id=current_user.id)
+    
+    if workout_type:
+        query = query.filter_by(type=workout_type)
+    
+    user_workouts = query.order_by(Workout.created_at.desc()).all()
     return render_template(
         'dashboard.html',
         username=current_user.username,
         email=current_user.email,
         active_section='workouts',
         workout_form=form,
-        workouts=user_workouts
+        workouts=user_workouts,
+        selected_type=workout_type
     )
 
 @app.route('/dashboard/workouts/create', methods=['POST'])

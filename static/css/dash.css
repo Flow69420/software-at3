@@ -149,6 +149,11 @@ body, html {
   color: #000;
 }
 
+.dropdown-item.selected {
+    background: #222;
+    color: #fff;
+}
+
 .logout-button {
   background: rgba(255, 100, 100, 0.2);
   border: 1px solid rgba(255, 100, 100, 0.18);
