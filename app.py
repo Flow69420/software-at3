@@ -4,7 +4,7 @@ from flask import render_template, redirect, url_for, flash, request
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-from models import db, User, Workout
+from models import db, User, Workout, Exercise
 
 from flask_migrate import Migrate
 
@@ -23,7 +23,7 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-from forms import RegistrationForm, LoginForm, WorkoutForm
+from forms import RegistrationForm, LoginForm, WorkoutForm, ExerciseForm
 
 # with app.app_context():
 #     db.create_all()
@@ -73,6 +73,7 @@ def dashboard():
 @login_required
 def workouts():
     form = WorkoutForm()
+    exercise_form = ExerciseForm()
     workout_type = request.args.get('type')
     query = Workout.query.filter_by(user_id=current_user.id)
     
@@ -80,13 +81,16 @@ def workouts():
         query = query.filter_by(type=workout_type)
     
     user_workouts = query.order_by(Workout.created_at.desc()).all()
+    user_exercises = Exercise.query.filter_by(user_id=current_user.id).order_by(Exercise.id.desc()).all()
     return render_template(
         'dashboard.html',
         username=current_user.username,
         email=current_user.email,
         active_section='workouts',
         workout_form=form,
+        exercise_form=exercise_form,
         workouts=user_workouts,
+        exercises=user_exercises,
         selected_type=workout_type
     )
 
@@ -108,4 +112,24 @@ def create_workout():
         flash('Workout created!', 'success')
     else:
         flash('Error creating workout.', 'danger')
+    return redirect(url_for('workouts'))
+
+@app.route('/dashboard/exercises/create', methods=['POST'])
+@login_required
+def create_exercise():
+    form = ExerciseForm()
+    if form.validate_on_submit():
+        new_exercise = Exercise(
+            name=form.name.data,
+            description=form.description.data,
+            video_url=form.video_url.data,
+            category=form.category.data,
+            equipment=form.equipment.data,
+            user_id=current_user.id
+        )
+        db.session.add(new_exercise)
+        db.session.commit()
+        flash('Exercise created!', 'success')
+    else:
+        flash('Error creating exercise.', 'danger')
     return redirect(url_for('workouts'))

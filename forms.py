@@ -24,7 +24,7 @@ class WorkoutForm(FlaskForm):
 
 class ExerciseForm(FlaskForm):
     name = StringField('Exercise Name', validators=[DataRequired(), Length(min=3, max=32)])
-    description = StringField('Description', validators=[Length(max=256)])
+    description = TextAreaField('Description', validators=[Length(max=256)])
     video_url = StringField('Video URL', validators=[Length(max=256)])
     category = StringField('Category', validators=[Length(max=32)])
     equipment = StringField('Equipment', validators=[Length(max=64)])

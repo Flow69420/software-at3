@@ -60,7 +60,7 @@
             <div class="main-sections center-content">
                 <div class="workout-section">
                     <h1>Workouts</h1>
-                    <button id="openWorkoutModal" class="sidebar-button">+ Create Workout</button>
+                    <button class="sidebar-button open-modal-btn" data-modal="workoutModal">+ Create Workout</button>
                     <div class="workouts-list">
                         {% if workouts %}
                             {% for workout in workouts %}
@@ -81,6 +81,29 @@
                             <p>No workouts yet. Create your first workout!</p>
                         {% endif %}
                     </div>
+                    <div class="exercise-section">
+                        <h1>Exercises</h1>
+                        <button class="sidebar-button open-modal-btn" data-modal="exerciseModal">+ Create Exercise</button>
+                        <div class="exercises-list">
+                            {% if exercises %}
+                                {% for exercise in exercises %}
+                                    <div class="exercise-card">
+                                        <div class="exercise-card-header">
+                                            <h3>{{ exercise.name }}</h3>
+                                            <span class="exercise-category">{{ exercise.category|capitalize }}</span>
+                                        </div>
+                                        <div class="exercise-card-body">
+                                            <div><strong>Equipment:</strong> {{ exercise.equipment|capitalize or "N/A" }}</div>
+                                            <div><strong>Video URL:</strong> {{ exercise.video_url or "No URL" }}</div>
+                                            <div><strong>Description:</strong> {{ exercise.description or "No description" }}</div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No exercises yet. Create your first exercise!</p>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endif %}
@@ -90,7 +113,7 @@
 
 <div id="workoutModal" class="modal" style="display:none;">
     <div class="modal-content">
-        <span class="close" id="closeWorkoutModal">&times;</span>
+        <span class="close close-modal-btn">&times;</span>
         <h2>Create Workout</h2>
         <form method="POST" action="{{ url_for('create_workout') }}">
             {{ workout_form.hidden_tag() }}
@@ -103,6 +126,24 @@
         </form>
     </div>
 </div>
+
+<div id="exerciseModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close close-modal-btn">&times;</span>
+        <h2>Create Exercise</h2>
+        <form method="POST" action="{{ url_for('create_exercise') }}">
+            {{ exercise_form.hidden_tag() }}
+            <div>{{ exercise_form.name.label }} {{ exercise_form.name() }}</div>
+            <div>{{ exercise_form.category.label }} {{ exercise_form.category() }}</div>
+            <div>{{ exercise_form.equipment.label }} {{ exercise_form.equipment() }}</div>
+            <div>{{ exercise_form.video_url.label }} {{ exercise_form.video_url() }}</div>
+            <div>{{ exercise_form.description.label }} {{ exercise_form.description() }}</div>
+            <div>{{ exercise_form.submit() }}</div>
+        </form>
+    </div>
+</div>
+
+{% endif %}
 <script>
 function toggleDropdown() {
     const dropdown = document.getElementById('workoutDropdown');
@@ -111,27 +152,30 @@ function toggleDropdown() {
     toggleBtn.classList.toggle('open');
 }
 
-const openBtn = document.getElementById('openWorkoutModal');
-if (openBtn) openBtn.onclick = function() {
-    document.getElementById('workoutModal').style.display = 'flex';
-}
-
-const closeBtn = document.getElementById('closeWorkoutModal');
-if (closeBtn) closeBtn.onclick = function() {
-    document.getElementById('workoutModal').style.display = 'none';
-}
-
-window.onclick = function(event) {
-    const modal = document.getElementById('workoutModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
 function selectDropdown(event, el) {
     event.preventDefault();
     window.location = el.href;
 }
+
+// Modal logic for all modals
+document.querySelectorAll('.open-modal-btn').forEach(btn => {
+    btn.onclick = function() {
+        const modalId = btn.getAttribute('data-modal');
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'flex';
+    }
+});
+document.querySelectorAll('.close-modal-btn').forEach(btn => {
+    btn.onclick = function() {
+        btn.closest('.modal').style.display = 'none';
+    }
+});
+window.onclick = function(event) {
+    document.querySelectorAll('.modal').forEach(modal => {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    });
+}
 </script>
-{% endif %}
 {% endblock %}
