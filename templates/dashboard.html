@@ -51,7 +51,26 @@
                     <div class="workout-section">
                         <h1>Workouts</h1>
                         <button id="openWorkoutModal" class="sidebar-button">+ Create Workout</button>
-                        <p>This is the workouts page. List, create, and manage workouts here.</p>
+                        <div class="workouts-list">
+                            {% if workouts %}
+                                {% for workout in workouts %}
+                                    <div class="workout-card">
+                                        <div class="workout-card-header">
+                                            <h3>{{ workout.name }}</h3>
+                                            <span class="workout-type">{{ workout.type }}</span>
+                                        </div>
+                                        <div class="workout-card-body">
+                                            <div><strong>Duration:</strong> {{ workout.duration }} min</div>
+                                            <div><strong>Difficulty:</strong> {{ workout.difficulty or "N/A" }}</div>
+                                            <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
+                                            <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No workouts yet. Create your first workout!</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
         </div>

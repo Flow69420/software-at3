@@ -4,7 +4,7 @@ from flask import render_template, redirect, url_for, flash
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-from models import db, User
+from models import db, User, Workout
 
 from flask_migrate import Migrate
 
@@ -73,13 +73,31 @@ def dashboard():
 @login_required
 def workouts():
     form = WorkoutForm()
-    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='workouts', workout_form=form)
+    user_workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.created_at.desc()).all()
+    return render_template(
+        'dashboard.html',
+        username=current_user.username,
+        email=current_user.email,
+        active_section='workouts',
+        workout_form=form,
+        workouts=user_workouts
+    )
 
 @app.route('/dashboard/workouts/create', methods=['POST'])
 @login_required
 def create_workout():
     form = WorkoutForm()
     if form.validate_on_submit():
+        new_workout = Workout(
+            name=form.name.data,
+            type=form.type.data,
+            duration=form.duration.data,
+            difficulty=form.difficulty.data,
+            description=form.description.data,
+            user_id=current_user.id
+        )
+        db.session.add(new_workout)
+        db.session.commit()
         flash('Workout created!', 'success')
     else:
         flash('Error creating workout.', 'danger')
