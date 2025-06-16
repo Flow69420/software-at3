@@ -45,8 +45,8 @@
     </div>
     <div class="main">
         {% if active_section == 'home' %}
-        <h1>Hello {{ username }}!</h1>
-        <div class="main-sections">
+            <h1>Hello {{ username }}!</h1>
+            <div class="main-sections">
                 <div class="main-card">
                     <h2>Workouts</h2>
                     <p>Here you can track your recent workouts and start new ones.</p>
@@ -55,34 +55,34 @@
                     <h2>Stats</h2>
                     <p>Your progress and stats will appear here.</p>
                 </div>
-            {% elif active_section == 'workouts' %}
-                <div class="main-sections center-content">
-                    <div class="workout-section">
-                        <h1>Workouts</h1>
-                        <button id="openWorkoutModal" class="sidebar-button">+ Create Workout</button>
-                        <div class="workouts-list">
-                            {% if workouts %}
-                                {% for workout in workouts %}
-                                    <div class="workout-card">
-                                        <div class="workout-card-header">
-                                            <h3>{{ workout.name }}</h3>
-                                            <span class="workout-type">{{ workout.type|capitalize }}</span>
-                                        </div>
-                                        <div class="workout-card-body">
-                                            <div><strong>Duration:</strong> {{ workout.duration }} min</div>
-                                            <div><strong>Difficulty:</strong> {{ workout.difficulty|capitalize or "N/A" }}</div>
-                                            <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
-                                            <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
-                                        </div>
+            </div>
+        {% elif active_section == 'workouts' %}
+            <div class="main-sections center-content">
+                <div class="workout-section">
+                    <h1>Workouts</h1>
+                    <button id="openWorkoutModal" class="sidebar-button">+ Create Workout</button>
+                    <div class="workouts-list">
+                        {% if workouts %}
+                            {% for workout in workouts %}
+                                <div class="workout-card">
+                                    <div class="workout-card-header">
+                                        <h3>{{ workout.name }}</h3>
+                                        <span class="workout-type">{{ workout.type|capitalize }}</span>
                                     </div>
-                                {% endfor %}
-                            {% else %}
-                                <p>No workouts yet. Create your first workout!</p>
-                            {% endif %}
-                        </div>
+                                    <div class="workout-card-body">
+                                        <div><strong>Duration:</strong> {{ workout.duration }} min</div>
+                                        <div><strong>Difficulty:</strong> {{ workout.difficulty|capitalize or "N/A" }}</div>
+                                        <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
+                                        <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No workouts yet. Create your first workout!</p>
+                        {% endif %}
                     </div>
                 </div>
-        </div>
+            </div>
         {% endif %}
     </div>
 </div>
@@ -111,11 +111,13 @@ function toggleDropdown() {
     toggleBtn.classList.toggle('open');
 }
 
-document.getElementById('openWorkoutModal').onclick = function() {
+const openBtn = document.getElementById('openWorkoutModal');
+if (openBtn) openBtn.onclick = function() {
     document.getElementById('workoutModal').style.display = 'flex';
 }
 
-document.getElementById('closeWorkoutModal').onclick = function() {
+const closeBtn = document.getElementById('closeWorkoutModal');
+if (closeBtn) closeBtn.onclick = function() {
     document.getElementById('workoutModal').style.display = 'none';
 }
 
