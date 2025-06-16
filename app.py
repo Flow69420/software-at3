@@ -1,10 +1,11 @@
 from flask import Flask
 from flask import render_template, redirect, url_for, flash, request, jsonify
+from calendar import monthrange
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-from models import db, User, Workout, Exercise, WorkoutExercise
+from models import db, User, Workout, Exercise, WorkoutExercise, WorkoutLog
 
 from flask_migrate import Migrate
 
@@ -16,6 +17,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 import os
+from collections import defaultdict
+from datetime import date, datetime, timedelta
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -283,3 +286,65 @@ def edit_exercise_modal(exercise_id):
         db.session.commit()
         return '', 204
     return render_template('edit_exercise_modal.html', form=form, exercise=exercise)
+
+@app.route('/dashboard/tracking')
+@login_required
+def tracking():
+    logs = (
+        WorkoutLog.query
+        .filter_by(user_id=current_user.id)
+        .order_by(WorkoutLog.date_completed.desc())
+        .all()
+    )
+    # Group logs by date
+    logs_by_date = defaultdict(list)
+    for log in logs:
+        logs_by_date[log.date_completed].append(log)
+    # Sort dates descending
+    sorted_dates = sorted(logs_by_date.keys(), reverse=True)
+    # Fetch all workouts for the user
+    user_workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.created_at.desc()).all()
+    # For each workout, get all completion dates
+    workout_completion_dates = {}
+    for workout in user_workouts:
+        dates = [log.date_completed.strftime('%Y-%m-%d') for log in WorkoutLog.query.filter_by(user_id=current_user.id, workout_id=workout.id).all()]
+        workout_completion_dates[workout.id] = set(dates)
+    today = date.today()
+    year = today.year
+    month = today.month
+    first_weekday, days_in_month = monthrange(year, month)  # first_weekday: 0=Monday
+    calendar_info = {
+        'year': year,
+        'month': month,
+        'first_weekday': first_weekday,
+        'days_in_month': days_in_month
+    }
+    return render_template(
+        'dashboard.html',
+        username=current_user.username,
+        email=current_user.email,
+        active_section='tracking',
+        logs_by_date=logs_by_date,
+        sorted_dates=sorted_dates,
+        workouts=user_workouts,
+        workout_completion_dates=workout_completion_dates,
+        profile_picture=current_user.profile_picture,
+        today=today,
+        timedelta=timedelta,
+        calendar_info=calendar_info
+    )
+
+@app.route('/dashboard/workouts/<int:workout_id>/complete', methods=['POST'])
+@login_required
+def complete_workout(workout_id):
+    today = date.today()
+    # Prevent duplicate log for same workout and date
+    existing_log = WorkoutLog.query.filter_by(user_id=current_user.id, workout_id=workout_id, date_completed=today).first()
+    if existing_log:
+        flash('You have already completed this workout today!', 'info')
+        return redirect(url_for('tracking'))
+    new_log = WorkoutLog(user_id=current_user.id, workout_id=workout_id, date_completed=today)
+    db.session.add(new_log)
+    db.session.commit()
+    flash('Workout marked as completed!', 'success')
+    return redirect(url_for('tracking'))

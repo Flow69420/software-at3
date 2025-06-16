@@ -602,3 +602,61 @@ body, html {
   display: block;
   overflow: visible;
 }
+
+.calendar-grid {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0.25em;
+    margin-top: 0.5em;
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+.calendar-grid th, .calendar-grid td {
+    width: 2.5em;
+    height: 2.1em;
+    text-align: center;
+    padding: 0.1em 0;
+    border: none;
+    font-size: 0.8em;
+    vertical-align: middle;
+}
+.calendar-grid th {
+    background: #f0f4f8;
+    color: #444;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+}
+.calendar-grid td {
+    background: #f9fafb;
+    color: #333;
+    border-radius: 20%;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+.calendar-grid td[style*="background: #4caf50"] {
+    background: #ff9966 !important;
+    color: #fff !important;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(67,233,123,0.15);
+}
+.calendar-grid td:hover:not([style*="background: #4caf50"]) {
+    background: #ff99665b;
+    color: #ff9966;
+}
+.calendar-grid td:empty {
+    background: transparent;
+    cursor: default;
+}
+.calendar-container {
+    animation: fadeIn 0.3s;
+    padding-bottom: 0.5em;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

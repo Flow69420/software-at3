@@ -61,3 +61,17 @@ class WorkoutExercise(db.Model):
 
     def __repr__(self):
         return f"<WorkoutExercise Workout ID: {self.workout_id}, Exercise ID: {self.exercise_id}, Order: {self.order}, Sets: {self.sets}, Reps: {self.reps}>"
+    
+class WorkoutLog(db.Model):
+    __tablename__ = 'workout_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'), nullable=False)
+    date_completed = db.Column(db.Date, nullable=False, default=db.func.current_date())
+    notes = db.Column(db.String(256), nullable=True)
+    # Relationships
+    user = db.relationship('User', backref=db.backref('workout_logs', lazy=True))
+    workout = db.relationship('Workout', backref=db.backref('workout_logs', lazy=True))
+
+    def __repr__(self):
+        return f"<WorkoutLog User ID: {self.user_id}, Workout ID: {self.workout_id}, Date: {self.date_completed}>"
