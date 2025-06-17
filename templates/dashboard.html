@@ -75,9 +75,11 @@
                                         <div><strong>Difficulty:</strong> {{ workout.difficulty|capitalize or "N/A" }}</div>
                                         <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
                                         <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
-                                        <button class="sidebar-button open-edit-workout-modal-btn" data-workout-id="{{ workout.id }}">Edit</button>
-                                        <button class="sidebar-button open-add-exercise-modal-btn" data-workout-id="{{ workout.id }}">+ Add Exercise</button>
-                                        <button class="sidebar-button open-workout-detail-modal-btn" data-workout-id="{{ workout.id }}">View Details</button>
+                                        <div class="workout-card-actions">
+                                            <button class="sidebar-button open-edit-workout-modal-btn" data-workout-id="{{ workout.id }}">Edit</button>
+                                            <button class="sidebar-button open-add-exercise-modal-btn" data-workout-id="{{ workout.id }}">+ Add Exercise</button>
+                                            <button class="sidebar-button open-workout-detail-modal-btn" data-workout-id="{{ workout.id }}">View Details</button>
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -100,7 +102,9 @@
                                             <div><strong>Equipment:</strong> {{ exercise.equipment|capitalize or "N/A" }}</div>
                                             <div><strong>Video URL:</strong> {{ exercise.video_url or "No URL" }}</div>
                                             <div><strong>Description:</strong> {{ exercise.description or "No description" }}</div>
-                                            <button class="sidebar-button open-edit-exercise-modal-btn" data-exercise-id="{{ exercise.id }}">Edit</button>
+                                            <div class="exercise-card-actions">
+                                                <button class="sidebar-button open-edit-exercise-modal-btn" data-exercise-id="{{ exercise.id }}">Edit</button>
+                                            </div>
                                         </div>
                                     </div>
                                 {% endfor %}

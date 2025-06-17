@@ -404,6 +404,24 @@ body, html {
     font-size: 0.85rem;
 }
 
+.workout-card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.workout-card-actions .sidebar-button {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  margin: 0;
+  border-radius: 6px;
+  border-color: #ff9966;
+  font-size: 0.8rem;
+}
+
 .exercises-list {
     margin-top: 1.5rem;
     display: flex;
@@ -464,6 +482,24 @@ body, html {
     margin-top: 0.7rem;
     color: #888;
     font-size: 0.85rem;
+}
+
+.exercise-card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.exercise-card-actions .sidebar-button {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  margin: 0;
+  border-radius: 6px;
+  border-color: #ff9966;
+  font-size: 0.8rem;
 }
 
 .main-sections,
