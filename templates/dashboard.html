@@ -75,6 +75,7 @@
                                         <div><strong>Difficulty:</strong> {{ workout.difficulty|capitalize or "N/A" }}</div>
                                         <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
                                         <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
+                                        <button class="sidebar-button open-add-exercise-modal-btn" data-workout-id="{{ workout.id }}">+ Add Exercise</button>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -144,6 +145,14 @@
     </div>
 </div>
 
+<div id="addExerciseModal" class="modal" style="display:none;">
+    <div class="modal-content" id="addExerciseModalContent">
+        <span class="close close-modal-btn">&times;</span>
+        <h2>Add Exercise to Workout</h2>
+        <div id="addExerciseFormContainer"></div>
+    </div>
+</div>
+
 {% endif %}
 <script>
 function toggleDropdown() {
@@ -178,5 +187,18 @@ window.onclick = function(event) {
         }
     });
 }
+
+document.querySelectorAll('.open-add-exercise-modal-btn').forEach(btn => {
+    btn.onclick = async function() {
+        const workoutId = btn.getAttribute('data-workout-id');
+        const modal = document.getElementById('addExerciseModal');
+        const formContainer = document.getElementById('addExerciseFormContainer');
+        
+        const resp = await fetch(`/dashboard/workouts/${workoutId}/add_exercise`);
+        const html = await resp.text();
+        formContainer.innerHTML = html;
+        modal.style.display = 'flex';
+    }
+});
 </script>
 {% endblock %}

@@ -36,3 +36,13 @@ class ProfileEditForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Images only!')])
     submit = SubmitField('Update Profile')
+
+class AddExerciseToWorkoutForm(FlaskForm):
+    exercise = SelectField('Exercise', coerce=int, validators=[DataRequired()])
+    sets = IntegerField('Sets', validators=[DataRequired()])
+    reps = IntegerField('Reps', validators=[DataRequired()])
+    order = IntegerField('Order', validators=[DataRequired()])
+    rest_time = IntegerField('Rest Time (seconds)', validators=[])
+    weight = IntegerField('Weight (kg)', validators=[])
+    notes = TextAreaField('Notes', validators=[Length(max=256)])
+    submit = SubmitField('Add to Workout')

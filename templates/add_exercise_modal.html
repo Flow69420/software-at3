@@ -1,0 +1,15 @@
+{% macro render_field(field) %}
+  <div>{{ field.label }} {{ field() }}</div>
+{% endmacro %}
+
+<form method="POST" action="/dashboard/workouts/{{ workout.id }}/add_exercise">
+    {{ form.hidden_tag() }}
+    {{ render_field(form.exercise) }}
+    {{ render_field(form.sets) }}
+    {{ render_field(form.reps) }}
+    {{ render_field(form.order) }}
+    {{ render_field(form.rest_time) }}
+    {{ render_field(form.weight) }}
+    {{ render_field(form.notes) }}
+    <div>{{ form.submit() }}</div>
+</form>

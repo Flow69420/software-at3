@@ -4,7 +4,7 @@ from flask import render_template, redirect, url_for, flash, request
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-from models import db, User, Workout, Exercise
+from models import db, User, Workout, Exercise, WorkoutExercise
 
 from flask_migrate import Migrate
 
@@ -25,7 +25,7 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-from forms import RegistrationForm, LoginForm, WorkoutForm, ExerciseForm, ProfileEditForm
+from forms import RegistrationForm, LoginForm, WorkoutForm, ExerciseForm, ProfileEditForm, AddExerciseToWorkoutForm
 
 # with app.app_context():
 #     db.create_all()
@@ -135,6 +135,35 @@ def create_exercise():
     else:
         flash('Error creating exercise.', 'danger')
     return redirect(url_for('workouts'))
+
+@app.route('/dashboard/workouts/<int:workout_id>/add_exercise', methods=['GET', 'POST'])
+@login_required
+def add_exercise_to_workout(workout_id):
+    workout = Workout.query.get_or_404(workout_id)
+
+    if workout.user_id != current_user.id:
+        flash('Unauthorized', 'danger')
+        return redirect(url_for('workouts'))
+    form = AddExerciseToWorkoutForm()
+    
+    user_exercises = Exercise.query.filter_by(user_id=current_user.id).all()
+    form.exercise.choices = [(e.id, e.name) for e in user_exercises]
+    if form.validate_on_submit():
+        new_we = WorkoutExercise(
+            workout_id=workout_id,
+            exercise_id=form.exercise.data,
+            sets=form.sets.data,
+            reps=form.reps.data,
+            order=form.order.data,
+            rest_time=form.rest_time.data,
+            weight=form.weight.data,
+            notes=form.notes.data
+        )
+        db.session.add(new_we)
+        db.session.commit()
+        flash('Exercise added to workout!', 'success')
+        return redirect(url_for('workouts'))
+    return render_template('add_exercise_modal.html', form=form, workout=workout)
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
