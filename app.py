@@ -93,7 +93,8 @@ def workouts():
         exercise_form=exercise_form,
         workouts=user_workouts,
         exercises=user_exercises,
-        selected_type=workout_type
+        selected_type=workout_type,
+        profile_picture=current_user.profile_picture
     )
 
 @app.route('/dashboard/workouts/create', methods=['POST'])
