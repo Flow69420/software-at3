@@ -1,0 +1,134 @@
+/* profile.css - Styling for the user profile page */
+
+.profile-container {
+  max-width: 420px;
+  margin: 3.5rem auto 2.5rem auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(255,153,102,0.13), 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2.5rem 2.2rem 2rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1.5px solid #ffe2d0;
+}
+
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 12px rgba(255,153,102,0.18);
+  margin-bottom: 1.3rem;
+  border: 3px solid #ff9966;
+  background: #fff7f2;
+}
+
+.profile-username {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #ff9966;
+  margin-bottom: 0.1rem;
+  letter-spacing: 0.5px;
+}
+
+.profile-email {
+  font-size: 1.08rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.profile-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.profile-form label {
+  font-weight: 600;
+  color: #ff9966;
+  margin-bottom: -0.75rem;
+  letter-spacing: 0.2px;
+  display: block;
+}
+
+.profile-form input[type="text"],
+.profile-form input[type="email"],
+.profile-form input[type="file"] {
+  padding: 0.7rem 1rem;
+  border: 1.5px solid #ffe2d0;
+  border-radius: 8px;
+  font-size: 1.04rem;
+  background: #fff8f3;
+  transition: border 0.2s, background 0.2s;
+}
+
+.profile-form input[type="text"]:focus,
+.profile-form input[type="email"]:focus {
+  border: 1.5px solid #ff9966;
+  outline: none;
+  background: #fff;
+}
+
+.profile-form input[type="submit"],
+.profile-form button[type="submit"] {
+  background: #ff9966;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  font-weight: 700;
+  font-size: 1.08rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  margin-top: 0;
+  box-shadow: 0 2px 8px rgba(255,153,102,0.08);
+}
+
+.profile-form input[type="submit"]:hover,
+.profile-form button[type="submit"]:hover {
+  background: #ff7f50;
+  box-shadow: 0 4px 16px rgba(255,153,102,0.18);
+}
+
+.profile-form input[type="file"] {
+  background: #fff;
+  border: none;
+  padding-left: 0;
+}
+
+.profile-back-btn {
+  display: inline-block;
+  background: #ff9966;
+  color: #fff !important;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 1rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 2rem;
+  box-shadow: 0 2px 8px rgba(255,153,102,0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.profile-back-btn:hover {
+  background: #ff7f50;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(255,153,102,0.18);
+}
+
+@media (max-width: 600px) {
+  .profile-container {
+    max-width: 98vw;
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+  }
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+  }
+}

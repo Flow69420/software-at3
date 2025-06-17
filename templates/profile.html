@@ -1,32 +1,29 @@
 {% extends "base.html" %}
 {% block title %}Profile{% endblock %}
+{% block stylesheet %}<link rel="stylesheet" href="/static/css/profile.css">{% endblock %}
 {% block content %}
-<div class="profile-page">
-    <h1>Profile</h1>
-    <div class="profile-card">
-        <div class="profile-info">
-            <form method="POST" action="{{ url_for('profile') }}" class="profile-edit-form" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-                <div>
-                    {{ form.username.label }}<br>
-                    {{ form.username(class_='form-control', value=username) }}
-                </div>
-                <div>
-                    {{ form.email.label }}<br>
-                    {{ form.email(class_='form-control', value=email) }}
-                </div>
-                <div>
-                    {{ form.profile_picture.label }}<br>
-                    {{ form.profile_picture(class_='form-control') }}
-                    <br>
-                    <img src="{{ url_for('static', filename='assets/' + (profile_picture or 'placeholder.256x256.png')) }}" alt="Profile Picture" class="profile-photo" style="width:128px;height:128px;border-radius:50%;margin-top:1rem;">
-                </div>
-                <div style="margin-top:1rem;">
-                    {{ form.submit(class_='sidebar-button') }}
-                </div>
-            </form>
-            <p style="margin-top:2rem;"><a href="{{ url_for('dashboard') }}" class="sidebar-button">Back to Dashboard</a></p>
+<div class="profile-container">
+    <img src="{{ url_for('static', filename='assets/' + (profile_picture or 'placeholder.256x256.png')) }}" alt="Profile Picture" class="profile-avatar">
+    <div class="profile-username">{{ username }}</div>
+    <div class="profile-email">{{ email }}</div>
+    <form method="POST" action="{{ url_for('profile') }}" class="profile-form" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.username.label }}<br>
+            {{ form.username(class_='form-control', value=username) }}
         </div>
-    </div>
+        <div>
+            {{ form.email.label }}<br>
+            {{ form.email(class_='form-control', value=email) }}
+        </div>
+        <div>
+            {{ form.profile_picture.label }}<br>
+            {{ form.profile_picture(class_='form-control') }}
+        </div>
+        <div>
+            {{ form.submit(class_='sidebar-button') }}
+        </div>
+    </form>
+    <a href="{{ url_for('dashboard') }}" class="profile-back-btn">Back to Dashboard</a>
 </div>
 {% endblock %}
