@@ -223,12 +223,7 @@ document.querySelectorAll('.open-workout-detail-modal-btn').forEach(btn => {
         const html = await resp.text();
         content.innerHTML = html;
         modal.style.display = 'flex';
-
-        content.querySelectorAll('.close-modal-btn').forEach(closeBtn => {
-            closeBtn.onclick = function() {
-                modal.style.display = 'none';
-            }
-        });
+        attachDetailsModalCloseBtn();
     }
 });
 
@@ -260,16 +255,26 @@ document.addEventListener('click', async function(e) {
                 });
                 if (resp.status === 204) {
                     modal.style.display = 'none';
-                    
                     const workoutDetailModal = document.getElementById('workoutDetailModal');
                     const workoutDetailContent = document.getElementById('workoutDetailModalContent');
                     const detailResp = await fetch(`/dashboard/workouts/${workoutId}/modal`);
                     workoutDetailContent.innerHTML = await detailResp.text();
+                    attachDetailsModalCloseBtn();
                 }
             }
         }
     }
 });
+
+// Event delegation for details modal close button
+const workoutDetailModal = document.getElementById('workoutDetailModal');
+if (workoutDetailModal) {
+    workoutDetailModal.addEventListener('click', function(e) {
+        if (e.target.classList.contains('close-modal-btn')) {
+            this.style.display = 'none';
+        }
+    });
+}
 
 // Drag and drop logic
 const exercises = document.querySelectorAll('.exercise-card[draggable="true"]');
