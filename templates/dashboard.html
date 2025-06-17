@@ -215,6 +215,7 @@ document.querySelectorAll('.open-add-exercise-modal-btn').forEach(btn => {
 
 document.querySelectorAll('.open-workout-detail-modal-btn').forEach(btn => {
     btn.onclick = async function() {
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         const workoutId = btn.getAttribute('data-workout-id');
         const modal = document.getElementById('workoutDetailModal');
         const content = document.getElementById('workoutDetailModalContent');
