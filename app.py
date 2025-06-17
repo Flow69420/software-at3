@@ -223,6 +223,23 @@ def edit_workout_exercise_modal(workout_id, we_id):
         return '', 204
     return render_template('edit_workout_exercise_modal.html', form=form, we=we)
 
+@app.route('/dashboard/workouts/<int:workout_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_workout_modal(workout_id):
+    workout = Workout.query.get_or_404(workout_id)
+    if workout.user_id != current_user.id:
+        return '', 403
+    form = WorkoutForm(obj=workout)
+    if form.validate_on_submit():
+        workout.name = form.name.data
+        workout.type = form.type.data
+        workout.duration = form.duration.data
+        workout.difficulty = form.difficulty.data
+        workout.description = form.description.data
+        db.session.commit()
+        return '', 204
+    return render_template('edit_workout_modal.html', form=form, workout=workout)
+
 @app.route('/dashboard/workouts/<int:workout_id>/add_exercise_drag', methods=['POST'])
 @login_required
 def add_exercise_drag(workout_id):
@@ -249,3 +266,20 @@ def add_exercise_drag(workout_id):
     db.session.add(new_we)
     db.session.commit()
     return jsonify({'success': True}), 200
+
+@app.route('/dashboard/exercises/<int:exercise_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_exercise_modal(exercise_id):
+    exercise = Exercise.query.get_or_404(exercise_id)
+    if exercise.user_id != current_user.id:
+        return '', 403
+    form = ExerciseForm(obj=exercise)
+    if form.validate_on_submit():
+        exercise.name = form.name.data
+        exercise.description = form.description.data
+        exercise.video_url = form.video_url.data
+        exercise.category = form.category.data
+        exercise.equipment = form.equipment.data
+        db.session.commit()
+        return '', 204
+    return render_template('edit_exercise_modal.html', form=form, exercise=exercise)

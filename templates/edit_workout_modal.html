@@ -1,0 +1,13 @@
+<div class="edit-workout-modal-content">
+    <span class="close close-modal-btn">&times;</span>
+    <h2>Edit Workout</h2>
+    <form method="POST" action="/dashboard/workouts/{{ workout.id }}/edit">
+        {{ form.hidden_tag() }}
+        <div>{{ form.name.label }}<br>{{ form.name() }}</div>
+        <div>{{ form.type.label }}<br>{{ form.type() }}</div>
+        <div>{{ form.duration.label }}<br>{{ form.duration() }}</div>
+        <div>{{ form.difficulty.label }}<br>{{ form.difficulty() }}</div>
+        <div>{{ form.description.label }}<br>{{ form.description() }}</div>
+        <div><input type="submit" class="sidebar-button" value="Edit Workout"></div>
+    </form>
+</div>

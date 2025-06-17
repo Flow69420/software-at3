@@ -21,7 +21,7 @@ class WorkoutForm(FlaskForm):
     duration = IntegerField('Duration (minutes)', validators=[DataRequired()])
     difficulty = SelectField('Difficulty', choices=[('', 'Select'), ('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced')], validators=[])
     description = TextAreaField('Description', validators=[Length(max=256)])
-    submit = SubmitField('Add Workout')
+    submit = SubmitField()
 
 class ExerciseForm(FlaskForm):
     name = StringField('Exercise Name', validators=[DataRequired(), Length(min=3, max=32)])
@@ -29,7 +29,7 @@ class ExerciseForm(FlaskForm):
     video_url = StringField('Video URL', validators=[Length(max=256)])
     category = StringField('Category', validators=[Length(max=32)])
     equipment = StringField('Equipment', validators=[Length(max=64)])
-    submit = SubmitField('Add Exercise')
+    submit = SubmitField()
 
 class ProfileEditForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])

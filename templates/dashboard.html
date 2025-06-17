@@ -75,6 +75,7 @@
                                         <div><strong>Difficulty:</strong> {{ workout.difficulty|capitalize or "N/A" }}</div>
                                         <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
                                         <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
+                                        <button class="sidebar-button open-edit-workout-modal-btn" data-workout-id="{{ workout.id }}">Edit</button>
                                         <button class="sidebar-button open-add-exercise-modal-btn" data-workout-id="{{ workout.id }}">+ Add Exercise</button>
                                         <button class="sidebar-button open-workout-detail-modal-btn" data-workout-id="{{ workout.id }}">View Details</button>
                                     </div>
@@ -99,6 +100,7 @@
                                             <div><strong>Equipment:</strong> {{ exercise.equipment|capitalize or "N/A" }}</div>
                                             <div><strong>Video URL:</strong> {{ exercise.video_url or "No URL" }}</div>
                                             <div><strong>Description:</strong> {{ exercise.description or "No description" }}</div>
+                                            <button class="sidebar-button open-edit-exercise-modal-btn" data-exercise-id="{{ exercise.id }}">Edit</button>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -125,7 +127,7 @@
             <div>{{ workout_form.duration.label }} {{ workout_form.duration() }}</div>
             <div>{{ workout_form.difficulty.label }} {{ workout_form.difficulty() }}</div>
             <div>{{ workout_form.description.label }} {{ workout_form.description() }}</div>
-            <div>{{ workout_form.submit() }}</div>
+            <div><input type="submit" class="sidebar-button" value="Add Workout"></div>
         </form>
     </div>
 </div>
@@ -141,7 +143,7 @@
             <div>{{ exercise_form.equipment.label }} {{ exercise_form.equipment() }}</div>
             <div>{{ exercise_form.video_url.label }} {{ exercise_form.video_url() }}</div>
             <div>{{ exercise_form.description.label }} {{ exercise_form.description() }}</div>
-            <div>{{ exercise_form.submit() }}</div>
+            <div><input type="submit" class="sidebar-button" value="Add Exercise"></div>
         </form>
     </div>
 </div>
@@ -163,6 +165,19 @@
 <div id="editWorkoutExerciseModal" class="modal" style="display:none;">
     <div class="modal-content" id="editWorkoutExerciseModalContent">
 
+    </div>
+</div>
+
+<div id="editWorkoutModal" class="modal" style="display:none;">
+    <div class="modal-content" id="editWorkoutModalContent">
+        <!-- Content loaded via AJAX -->
+    </div>
+</div>
+
+<!-- Edit Exercise Modal -->
+<div id="editExerciseModal" class="modal" style="display:none;">
+    <div class="modal-content" id="editExerciseModalContent">
+        <!-- Content loaded via AJAX -->
     </div>
 </div>
 
@@ -260,6 +275,63 @@ document.addEventListener('click', async function(e) {
                     const detailResp = await fetch(`/dashboard/workouts/${workoutId}/modal`);
                     workoutDetailContent.innerHTML = await detailResp.text();
                     attachDetailsModalCloseBtn();
+                }
+            }
+        }
+    } else if (e.target.classList.contains('open-edit-workout-modal-btn')) {
+        const workoutId = e.target.getAttribute('data-workout-id');
+        const modal = document.getElementById('editWorkoutModal');
+        const content = document.getElementById('editWorkoutModalContent');
+        const resp = await fetch(`/dashboard/workouts/${workoutId}/edit`);
+        const html = await resp.text();
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+        content.querySelectorAll('.close-modal-btn').forEach(closeBtn => {
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+        });
+        const form = content.querySelector('form');
+        if (form) {
+            form.onsubmit = async function(ev) {
+                ev.preventDefault();
+                const formData = new FormData(form);
+                const resp = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (resp.status === 204) {
+                    modal.style.display = 'none';
+                    location.reload();
+                }
+            }
+        }
+    } else if (e.target.classList.contains('open-edit-exercise-modal-btn')) {
+        const exerciseId = e.target.getAttribute('data-exercise-id');
+        const modal = document.getElementById('editExerciseModal');
+        const content = document.getElementById('editExerciseModalContent');
+        const resp = await fetch(`/dashboard/exercises/${exerciseId}/edit`);
+        const html = await resp.text();
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+        content.querySelectorAll('.close-modal-btn').forEach(closeBtn => {
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+        });
+        const form = content.querySelector('form');
+        if (form) {
+            form.onsubmit = async function(ev) {
+                ev.preventDefault();
+                const formData = new FormData(form);
+                const resp = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (resp.status === 204) {
+                    modal.style.display = 'none';
+                    // Optionally refresh the page or exercise card
+                    location.reload();
                 }
             }
         }
