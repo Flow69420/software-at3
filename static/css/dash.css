@@ -2,11 +2,15 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: white;
+    height: 100%;
+    overflow: hidden;
 }
 
 .dashboard {
     display: flex;
     height: 100vh;
+    overflow: hidden;
 }
 
 .sidebar {
@@ -170,6 +174,7 @@ body, html {
   background: white;
   padding: 2rem;
   overflow: hidden;
+  height: auto;
 }
 
 
@@ -178,6 +183,7 @@ body, html {
   gap: 2rem;
   margin-top: 1.5rem;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .center-content {
@@ -197,14 +203,17 @@ body, html {
 }
 
 .workout-section {
-  width: 96%;
-  height: 96%;
-  margin-top: -2rem;
+  width: 100%;
+  height: auto;
+  max-height: 95vh;
+  overflow-y: auto;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  padding: 1rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  margin-top: -2rem;
 }
 
 .main-card:hover {
@@ -225,7 +234,7 @@ body, html {
   position: fixed;
   z-index: 1000;
   left: 0; top: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0,0,0,0.65);
   display: flex; 
   align-items: center; 
   justify-content: center;
@@ -240,7 +249,8 @@ body, html {
   min-width: 25%;
   max-width: 45%;
   max-height: 65%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 40px rgba(255,153,102,0.18), 0 2px 8px rgba(0,0,0,0.10);
+  border: 2px solid #ff9966;
   position: relative;
   margin: 0;
   display: flex;
@@ -256,6 +266,12 @@ body, html {
   top: 1rem;
   font-size: 1.5rem;
   cursor: pointer;
+  color: #ff9966;
+  transition: color 0.2s;
+}
+
+.close:hover {
+  color: #ff9966;
 }
 
 .modal-content form {
@@ -331,6 +347,7 @@ body, html {
     flex-wrap: wrap;
     gap: 1.5rem;
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .workout-card {
@@ -392,6 +409,7 @@ body, html {
     flex-wrap: wrap;
     gap: 1.5rem;
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .exercise-card {
@@ -445,4 +463,10 @@ body, html {
     margin-top: 0.7rem;
     color: #888;
     font-size: 0.85rem;
+}
+
+.main-sections,
+.center-content {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
 }
