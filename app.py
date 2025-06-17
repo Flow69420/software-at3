@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -222,3 +222,30 @@ def edit_workout_exercise_modal(workout_id, we_id):
         db.session.commit()
         return '', 204
     return render_template('edit_workout_exercise_modal.html', form=form, we=we)
+
+@app.route('/dashboard/workouts/<int:workout_id>/add_exercise_drag', methods=['POST'])
+@login_required
+def add_exercise_drag(workout_id):
+    data = request.get_json()
+    exercise_id = data.get('exercise_id')
+    
+    if not exercise_id:
+        return jsonify({'error': 'No exercise_id provided'}), 400
+    workout = Workout.query.get_or_404(workout_id)
+    exercise = Exercise.query.get_or_404(exercise_id)
+    # Only allow the owner to add
+    if workout.user_id != current_user.id or exercise.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    # Add with default values for sets/reps/order
+    from models import WorkoutExercise
+    order = len(workout.workout_exercises) + 1
+    new_we = WorkoutExercise(
+        workout_id=workout_id,
+        exercise_id=exercise_id,
+        order=order,
+        sets=3,
+        reps=10
+    )
+    db.session.add(new_we)
+    db.session.commit()
+    return jsonify({'success': True}), 200

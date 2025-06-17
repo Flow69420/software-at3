@@ -65,7 +65,7 @@
                     <div class="workouts-list">
                         {% if workouts %}
                             {% for workout in workouts %}
-                                <div class="workout-card">
+                                <div class="workout-card droppable-workout" data-workout-id="{{ workout.id }}">
                                     <div class="workout-card-header">
                                         <h3>{{ workout.name }}</h3>
                                         <span class="workout-type">{{ workout.type|capitalize }}</span>
@@ -87,10 +87,10 @@
                     <div class="exercise-section">
                         <h1>Exercises</h1>
                         <button class="sidebar-button open-modal-btn" data-modal="exerciseModal">+ Create Exercise</button>
-                        <div class="exercises-list">
+                        <div class="exercises-list" id="draggable-exercises">
                             {% if exercises %}
                                 {% for exercise in exercises %}
-                                    <div class="exercise-card">
+                                    <div class="exercise-card" draggable="true" data-exercise-id="{{ exercise.id }}">
                                         <div class="exercise-card-header">
                                             <h3>{{ exercise.name }}</h3>
                                             <span class="exercise-category">{{ exercise.category|capitalize }}</span>
@@ -269,6 +269,48 @@ document.addEventListener('click', async function(e) {
             }
         }
     }
+});
+
+// Drag and drop logic
+const exercises = document.querySelectorAll('.exercise-card[draggable="true"]');
+const workouts = document.querySelectorAll('.droppable-workout');
+
+exercises.forEach(ex => {
+    ex.addEventListener('dragstart', function(e) {
+        e.dataTransfer.setData('text/plain', ex.getAttribute('data-exercise-id'));
+        ex.classList.add('dragging');
+    });
+    ex.addEventListener('dragend', function(e) {
+        ex.classList.remove('dragging');
+    });
+});
+
+workouts.forEach(wk => {
+    wk.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        wk.classList.add('drag-over');
+    });
+    wk.addEventListener('dragleave', function(e) {
+        wk.classList.remove('drag-over');
+    });
+    wk.addEventListener('drop', async function(e) {
+        e.preventDefault();
+        wk.classList.remove('drag-over');
+        const exerciseId = e.dataTransfer.getData('text/plain');
+        const workoutId = wk.getAttribute('data-workout-id');
+        // Send AJAX POST to backend
+        const resp = await fetch(`/dashboard/workouts/${workoutId}/add_exercise_drag`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exercise_id: exerciseId })
+        });
+        if (resp.ok) {
+            alert('Exercise added to workout!');
+            // Optionally refresh the workout card or modal
+        } else {
+            alert('Failed to add exercise.');
+        }
+    });
 });
 </script>
 {% endblock %}
