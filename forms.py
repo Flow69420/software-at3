@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, TextAreaField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
+from flask_wtf.file import FileAllowed
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])
@@ -29,3 +30,9 @@ class ExerciseForm(FlaskForm):
     category = StringField('Category', validators=[Length(max=32)])
     equipment = StringField('Equipment', validators=[Length(max=64)])
     submit = SubmitField('Add Exercise')
+
+class ProfileEditForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Images only!')])
+    submit = SubmitField('Update Profile')

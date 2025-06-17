@@ -6,7 +6,7 @@
     <div class="sidebar">
         <div class="sidebar-island">
             <div class="profile-section">
-                <img src="{{ profile_image_url }}" alt="Profile Photo" class="profile-photo">
+                <img src="{{ url_for('static', filename='assets/' + (profile_picture or 'placeholder.256x256.png')) }}" alt="Profile Photo" class="profile-photo">
                 <div class="profile-info">
                     <div class="profile-name">{{ username }}</div>
                     <div class="profile-email">{{ email }}</div>
@@ -39,6 +39,7 @@
                         <a href="{{ url_for('workouts') }}" class="sidebar-button" id="workoutsSidebarBtn">Workouts</a>
                     {% endif %}
                 </div>
+                <a href="{{ url_for('profile') }}" class="sidebar-button">Profile</a>
                 <a href="{{ url_for('logout') }}" class="sidebar-button logout-button">Logout</a>
             </div>
         </div>

@@ -14,6 +14,8 @@ migrate = Migrate(app, db)
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
+import os
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -23,7 +25,7 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-from forms import RegistrationForm, LoginForm, WorkoutForm, ExerciseForm
+from forms import RegistrationForm, LoginForm, WorkoutForm, ExerciseForm, ProfileEditForm
 
 # with app.app_context():
 #     db.create_all()
@@ -67,7 +69,7 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='home')
+    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='home', profile_picture=current_user.profile_picture)
 
 @app.route('/dashboard/workouts')
 @login_required
@@ -133,3 +135,27 @@ def create_exercise():
     else:
         flash('Error creating exercise.', 'danger')
     return redirect(url_for('workouts'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = ProfileEditForm(obj=current_user)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        if form.profile_picture.data:
+            filename = secure_filename(form.profile_picture.data.filename)
+            picture_path = os.path.join('static', 'assets', filename)
+            form.profile_picture.data.save(picture_path)
+            current_user.profile_picture = filename
+        from models import db
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('profile'))
+    return render_template(
+        'profile.html',
+        username=current_user.username,
+        email=current_user.email,
+        profile_picture=current_user.profile_picture,
+        form=form
+    )
