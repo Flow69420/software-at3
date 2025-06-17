@@ -57,6 +57,7 @@
 .profile-form input[type="text"],
 .profile-form input[type="email"],
 .profile-form input[type="file"] {
+  width: 90%;
   padding: 0.7rem 1rem;
   border: 1.5px solid #ffe2d0;
   border-radius: 8px;
