@@ -76,6 +76,7 @@
                                         <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
                                         <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
                                         <button class="sidebar-button open-add-exercise-modal-btn" data-workout-id="{{ workout.id }}">+ Add Exercise</button>
+                                        <button class="sidebar-button open-workout-detail-modal-btn" data-workout-id="{{ workout.id }}">View Details</button>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -153,6 +154,18 @@
     </div>
 </div>
 
+<div id="workoutDetailModal" class="modal" style="display:none;">
+    <div class="modal-content" id="workoutDetailModalContent">
+
+    </div>
+</div>
+
+<div id="editWorkoutExerciseModal" class="modal" style="display:none;">
+    <div class="modal-content" id="editWorkoutExerciseModalContent">
+
+    </div>
+</div>
+
 {% endif %}
 <script>
 function toggleDropdown() {
@@ -167,7 +180,6 @@ function selectDropdown(event, el) {
     window.location = el.href;
 }
 
-// Modal logic for all modals
 document.querySelectorAll('.open-modal-btn').forEach(btn => {
     btn.onclick = function() {
         const modalId = btn.getAttribute('data-modal');
@@ -198,6 +210,63 @@ document.querySelectorAll('.open-add-exercise-modal-btn').forEach(btn => {
         const html = await resp.text();
         formContainer.innerHTML = html;
         modal.style.display = 'flex';
+    }
+});
+
+document.querySelectorAll('.open-workout-detail-modal-btn').forEach(btn => {
+    btn.onclick = async function() {
+        const workoutId = btn.getAttribute('data-workout-id');
+        const modal = document.getElementById('workoutDetailModal');
+        const content = document.getElementById('workoutDetailModalContent');
+        const resp = await fetch(`/dashboard/workouts/${workoutId}/modal`);
+        const html = await resp.text();
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+
+        content.querySelectorAll('.close-modal-btn').forEach(closeBtn => {
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+        });
+    }
+});
+
+document.addEventListener('click', async function(e) {
+    if (e.target.classList.contains('open-edit-workout-exercise-modal-btn')) {
+        const workoutId = e.target.getAttribute('data-workout-id');
+        const weId = e.target.getAttribute('data-we-id');
+        const modal = document.getElementById('editWorkoutExerciseModal');
+        const content = document.getElementById('editWorkoutExerciseModalContent');
+        const resp = await fetch(`/dashboard/workouts/${workoutId}/edit_exercise/${weId}/modal`);
+        const html = await resp.text();
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+        
+        content.querySelectorAll('.close-modal-btn').forEach(closeBtn => {
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+        });
+
+        const form = content.querySelector('form');
+        if (form) {
+            form.onsubmit = async function(ev) {
+                ev.preventDefault();
+                const formData = new FormData(form);
+                const resp = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (resp.status === 204) {
+                    modal.style.display = 'none';
+                    
+                    const workoutDetailModal = document.getElementById('workoutDetailModal');
+                    const workoutDetailContent = document.getElementById('workoutDetailModalContent');
+                    const detailResp = await fetch(`/dashboard/workouts/${workoutId}/modal`);
+                    workoutDetailContent.innerHTML = await detailResp.text();
+                }
+            }
+        }
     }
 });
 </script>

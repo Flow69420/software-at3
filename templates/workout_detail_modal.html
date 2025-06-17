@@ -1,0 +1,26 @@
+<div class="workout-detail-modal-content">
+    <span class="close close-modal-btn">&times;</span>
+    <h1>{{ workout.name }}</h1>
+    <div><strong>Type:</strong> {{ workout.type|capitalize }}</div>
+    <div><strong>Duration:</strong> {{ workout.duration }} min</div>
+    <div><strong>Difficulty:</strong> {{ workout.difficulty|capitalize or 'N/A' }}</div>
+    <div><strong>Description:</strong> {{ workout.description or 'No description' }}</div>
+    <div><strong>Created:</strong> {{ workout.created_at.strftime('%Y-%m-%d') }}</div>
+    <hr>
+    <h2>Exercises in this Workout</h2>
+    {% if workout_exercises %}
+        <ol>
+        {% for we in workout_exercises %}
+            <li>
+                <strong>{{ we.exercise.name }}</strong> (Order: {{ we.order }})<br>
+                Sets: {{ we.sets }}, Reps: {{ we.reps }}, Rest: {{ we.rest_time or 'N/A' }}s, Weight: {{ we.weight or 'N/A' }}kg<br>
+                <em>{{ we.exercise.description or 'No description' }}</em>
+                {% if we.notes %}<div><strong>Notes:</strong> {{ we.notes }}</div>{% endif %}
+                <button class="sidebar-button open-edit-workout-exercise-modal-btn" data-workout-id="{{ workout.id }}" data-we-id="{{ we.id }}">Edit</button>
+            </li>
+        {% endfor %}
+        </ol>
+    {% else %}
+        <p>No exercises added to this workout yet.</p>
+    {% endif %}
+</div>

@@ -25,7 +25,7 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-from forms import RegistrationForm, LoginForm, WorkoutForm, ExerciseForm, ProfileEditForm, AddExerciseToWorkoutForm
+from forms import RegistrationForm, LoginForm, WorkoutForm, ExerciseForm, ProfileEditForm, AddExerciseToWorkoutForm, EditWorkoutExerciseForm
 
 # with app.app_context():
 #     db.create_all()
@@ -165,6 +165,20 @@ def add_exercise_to_workout(workout_id):
         return redirect(url_for('workouts'))
     return render_template('add_exercise_modal.html', form=form, workout=workout)
 
+@app.route('/dashboard/workouts/<int:workout_id>/modal')
+@login_required
+def workout_detail_modal(workout_id):
+    workout = Workout.query.get_or_404(workout_id)
+    if workout.user_id != current_user.id:
+        return '', 403
+    workout_exercises = (
+        WorkoutExercise.query
+        .filter_by(workout_id=workout_id)
+        .order_by(WorkoutExercise.order.asc())
+        .all()
+    )
+    return render_template('workout_detail_modal.html', workout=workout, workout_exercises=workout_exercises)
+
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
@@ -188,3 +202,22 @@ def profile():
         profile_picture=current_user.profile_picture,
         form=form
     )
+
+@app.route('/dashboard/workouts/<int:workout_id>/edit_exercise/<int:we_id>/modal', methods=['GET', 'POST'])
+@login_required
+def edit_workout_exercise_modal(workout_id, we_id):
+    workout = Workout.query.get_or_404(workout_id)
+    we = WorkoutExercise.query.get_or_404(we_id)
+    if workout.user_id != current_user.id or we.workout_id != workout_id:
+        return '', 403
+    form = EditWorkoutExerciseForm(obj=we)
+    if form.validate_on_submit():
+        we.sets = form.sets.data
+        we.reps = form.reps.data
+        we.order = form.order.data
+        we.rest_time = form.rest_time.data
+        we.weight = form.weight.data
+        we.notes = form.notes.data
+        db.session.commit()
+        return '', 204
+    return render_template('edit_workout_exercise_modal.html', form=form, we=we)

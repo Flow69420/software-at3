@@ -46,3 +46,12 @@ class AddExerciseToWorkoutForm(FlaskForm):
     weight = IntegerField('Weight (kg)', validators=[])
     notes = TextAreaField('Notes', validators=[Length(max=256)])
     submit = SubmitField('Add to Workout')
+
+class EditWorkoutExerciseForm(FlaskForm):
+    sets = IntegerField('Sets', validators=[DataRequired()])
+    reps = IntegerField('Reps', validators=[DataRequired()])
+    order = IntegerField('Order', validators=[DataRequired()])
+    rest_time = IntegerField('Rest Time (seconds)', validators=[])
+    weight = IntegerField('Weight (kg)', validators=[])
+    notes = TextAreaField('Notes', validators=[Length(max=256)])
+    submit = SubmitField('Update')
