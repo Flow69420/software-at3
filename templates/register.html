@@ -10,30 +10,46 @@
     <div class="form-group">
         {{ form.username.label }}<br>
         {{ form.username(class_="glass-input") }}<br>
-        {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
+        {% if form.username.errors %}
+        <div class="form-error-panel">
+            {% for error in form.username.errors %}
+                <div class="form-error-msg">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
     <div class="form-group">
         {{ form.email.label }}<br>
         {{ form.email(class_="glass-input") }}<br>
-        {% for error in form.email.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
+        {% if form.email.errors %}
+        <div class="form-error-panel">
+            {% for error in form.email.errors %}
+                <div class="form-error-msg">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
     <div class="form-group">
         {{ form.password.label }}<br>
         {{ form.password(class_="glass-input") }}<br>
-        {% for error in form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
+        {% if form.password.errors %}
+        <div class="form-error-panel">
+            {% for error in form.password.errors %}
+                <div class="form-error-msg">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
     <div class="form-group">
         {{ form.confirm_password.label }}<br>
         {{ form.confirm_password(class_="glass-input") }}<br>
-        {% for error in form.confirm_password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
+        {% if form.confirm_password.errors %}
+        <div class="form-error-panel">
+            {% for error in form.confirm_password.errors %}
+                <div class="form-error-msg">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
     <div class="form-group">{{ form.submit(class_="glass-button") }}</div>
 </form>

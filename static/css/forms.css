@@ -27,11 +27,16 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .glass-input {
@@ -44,6 +49,9 @@ body, html {
     margin-top: 0.25rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     color: #28282B;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .glass-input::placeholder {
@@ -67,6 +75,10 @@ label {
   font-weight: 750;
   display: block;
   margin-bottom: -1rem;
+  text-align: left;
+  width: 20rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .glass-button {
@@ -95,4 +107,35 @@ label {
 .error {
   color: #ffaaaa;
   font-size: 0.875rem;
+}
+
+.form-error-panel {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid #ffb3b3;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    animation: fadeIn 0.3s;
+    width: 20rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-error-msg {
+    color: #d8000c;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }

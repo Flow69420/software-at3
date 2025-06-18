@@ -1,12 +1,25 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, TextAreaField, FileField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_wtf.file import FileAllowed
+import re
+
+def secure_password(form, field):
+    password = field.data or ''
+    if (len(password) < 8 or
+        not re.search(r'[A-Z]', password) or
+        not re.search(r'[a-z]', password) or
+        not re.search(r'[0-9]', password) or
+        not re.search(r'[^A-Za-z0-9]', password)):
+        raise ValidationError(
+            'Password must be at least 8 characters long and contain an uppercase letter, '
+            'a lowercase letter, a digit, and a special character.'
+        )
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=64)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=64), secure_password])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
     submit = SubmitField('Register')
 
