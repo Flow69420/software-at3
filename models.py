@@ -10,7 +10,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(128), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(8), default='user', nullable=False)
-    profile_picture = db.Column(db.String(256), nullable=True, default='default.jpg')
+    profile_picture = db.Column(db.String(256), nullable=True, default='/static/assets/placeholder.256x256.png')
 
     def __repr__(self):
         return f"<User {self.username}, {self.email}, {self.role}, {self.id}>"

@@ -590,3 +590,32 @@ def stats():
         active_section='stats',
         selected_type=None
     )
+
+@app.route('/dashboard/workouts/<int:workout_id>/delete', methods=['POST'])
+@login_required
+def delete_workout(workout_id):
+    workout = Workout.query.get_or_404(workout_id)
+    if workout.user_id != current_user.id:
+        flash('Unauthorized', 'danger')
+        return redirect(url_for('workouts'))
+    # Delete related WorkoutExercise and WorkoutLog records
+    WorkoutExercise.query.filter_by(workout_id=workout_id).delete()
+    WorkoutLog.query.filter_by(workout_id=workout_id).delete()
+    db.session.delete(workout)
+    db.session.commit()
+    flash('Workout deleted!', 'success')
+    return redirect(url_for('workouts'))
+
+@app.route('/dashboard/exercises/<int:exercise_id>/delete', methods=['POST'])
+@login_required
+def delete_exercise(exercise_id):
+    exercise = Exercise.query.get_or_404(exercise_id)
+    if exercise.user_id != current_user.id:
+        flash('Unauthorized', 'danger')
+        return redirect(url_for('workouts'))
+    # Delete related WorkoutExercise records
+    WorkoutExercise.query.filter_by(exercise_id=exercise_id).delete()
+    db.session.delete(exercise)
+    db.session.commit()
+    flash('Exercise deleted!', 'success')
+    return redirect(url_for('workouts'))

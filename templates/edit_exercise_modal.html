@@ -10,4 +10,7 @@
         <div>{{ form.description.label }}<br>{{ form.description() }}</div>
         <div><input type="submit" class="sidebar-button" value="Edit Exercise"></div>
     </form>
+    <form method="POST" action="{{ url_for('delete_exercise', exercise_id=exercise.id) }}" style="margin-top:1em;" onsubmit="return confirm('Are you sure you want to delete this exercise? This cannot be undone.');">
+        <button type="submit" class="sidebar-button" style="background:#e57373; color:white;">Delete Exercise</button>
+    </form>
 </div>
