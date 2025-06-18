@@ -286,7 +286,13 @@
                                         </div>
                                         <div class="exercise-card-body">
                                             <div><strong>Equipment:</strong> {{ exercise.equipment|capitalize or "N/A" }}</div>
-                                            <div><strong>Video URL:</strong> {{ exercise.video_url or "No URL" }}</div>
+                                            <div><strong>Video URL:</strong>
+                                                {% if exercise.video_url %}
+                                                    <a href="{{ exercise.video_url }}" target="_blank" rel="noopener">{{ exercise.video_url }}</a>
+                                                {% else %}
+                                                    No URL
+                                                {% endif %}
+                                            </div>
                                             <div><strong>Description:</strong> {{ exercise.description or "No description" }}</div>
                                             <div class="exercise-card-actions">
                                                 <button class="sidebar-button open-edit-exercise-modal-btn" data-exercise-id="{{ exercise.id }}">Edit</button>
