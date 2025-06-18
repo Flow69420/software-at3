@@ -14,6 +14,7 @@
             </div>
             <div class="sidebar-divider"></div>
             <div class="sidebar-buttons">
+                <a href="{{ url_for('dashboard') }}" class="sidebar-button{% if active_section == 'home' %} active{% endif %}">Home</a>
                 <div class="sidebar-dropdown">
                     {% if active_section == 'workouts' %}
                         <div class="sidebar-button dropdown-toggle active" onclick="toggleDropdown()" id="workoutsSidebarBtn">
@@ -37,7 +38,6 @@
                         <a href="{{ url_for('workouts') }}" class="sidebar-button" id="workoutsSidebarBtn">Workouts</a>
                     {% endif %}
                 </div>
-                <a href="{{ url_for('dashboard') }}" class="sidebar-button{% if active_section == 'home' %} active{% endif %}">Home</a>
                 <a href="{{ url_for('tracking') }}" class="sidebar-button{% if active_section == 'tracking' %} active{% endif %}">Tracking</a>
                 <a href="{{ url_for('stats') }}" class="sidebar-button{% if active_section == 'stats' %} active{% endif %}">Stats</a>
                 <a href="{{ url_for('profile') }}" class="sidebar-button{% if active_section == 'profile' %} active{% endif %}">Profile</a>
