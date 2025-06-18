@@ -694,12 +694,67 @@ body, html {
   display: block;
 }
 
+/* Minimalist styling for stats dropdown selects */
 .progression-controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
   margin-bottom: 0.5rem;
+}
+
+.progression-controls .progression-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 320px;
+}
+
+.progression-controls label {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 0.1rem;
+}
+
+.progression-controls select {
+  width: 100%;
+  max-width: 320px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fafafa;
+  color: #222;
+  margin-bottom: 0;
+  box-shadow: none;
+  outline: none;
+  transition: border 0.2s;
+  border: 1.5px solid #ff9966;
+}
+
+.progression-controls select:focus {
+  background: #fff;
+}
+
+.progression-controls .sidebar-button {
+  width: 100%;
+  max-width: 320px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  border: 1px solid rgba(0,0,0,0.07);
+}
+
+.progression-controls .sidebar-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  color: #000;
+  border: 1px solid rgba(0,0,0,0.18);
 }
 
 .charts-row {
