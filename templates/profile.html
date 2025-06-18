@@ -18,18 +18,24 @@
         </div>
         <div>
             {{ form.profile_picture.label }}<br>
-            <label class="custom-file-label" for="profile_picture">Choose File</label>
+            <label class="custom-file-label" for="profile_picture" id="custom-file-label">Choose File</label>
             {{ form.profile_picture(class_='form-control', id='profile_picture', style='display:none;') }}
             <span class="file-name" id="file-name"></span>
         </div>
         <script>
-        document.getElementById('profile_picture').addEventListener('change', function(){
-            var fileName = this.files[0] ? this.files[0].name : '';
-            document.getElementById('file-name').textContent = fileName;
+        const fileInput = document.getElementById('profile_picture');
+        const fileLabel = document.getElementById('custom-file-label');
+        const fileNameSpan = document.getElementById('file-name');
+        fileLabel.addEventListener('click', function(e) {
+          // Only trigger if not already opening
+          if (document.activeElement !== fileInput) {
+            fileInput.click();
+            e.preventDefault();
+          }
         });
-        document.querySelector('.custom-file-label').onclick = function() {
-            document.getElementById('profile_picture').click();
-        };
+        fileInput.addEventListener('change', function() {
+          fileNameSpan.textContent = this.files[0] ? this.files[0].name : '';
+        });
         </script>
         <div>
             {{ form.submit(class_='sidebar-button') }}
