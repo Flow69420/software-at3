@@ -18,8 +18,19 @@
         </div>
         <div>
             {{ form.profile_picture.label }}<br>
-            {{ form.profile_picture(class_='form-control') }}
+            <label class="custom-file-label" for="profile_picture">Choose File</label>
+            {{ form.profile_picture(class_='form-control', id='profile_picture', style='display:none;') }}
+            <span class="file-name" id="file-name"></span>
         </div>
+        <script>
+        document.getElementById('profile_picture').addEventListener('change', function(){
+            var fileName = this.files[0] ? this.files[0].name : '';
+            document.getElementById('file-name').textContent = fileName;
+        });
+        document.querySelector('.custom-file-label').onclick = function() {
+            document.getElementById('profile_picture').click();
+        };
+        </script>
         <div>
             {{ form.submit(class_='sidebar-button') }}
         </div>
