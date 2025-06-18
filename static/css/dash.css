@@ -703,13 +703,6 @@ body, html {
   margin-bottom: 0.5rem;
 }
 
-.progression-controls .progression-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 320px;
-}
-
 .progression-controls label {
   font-size: 1rem;
   color: #333;
