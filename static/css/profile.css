@@ -1,7 +1,17 @@
-/* profile.css - Styling for the user profile page */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  background: whitesmoke;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .profile-container {
-  max-width: 420px;
+  max-width: 500px;
+  min-width: 400px;
   margin: 3.5rem auto 2.5rem auto;
   background: #fff;
   border-radius: 20px;
