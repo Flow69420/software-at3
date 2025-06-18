@@ -52,14 +52,194 @@
             <h1>Hello {{ username }}!</h1>
             <div class="main-sections">
                 <div class="main-card">
-                    <h2>Workouts</h2>
-                    <p>Here you can track your recent workouts and start new ones.</p>
+                    <h2>Recent Workouts</h2>
+                    <div class="workouts-list">
+                        {% if recent_workouts %}
+                            {% for workout in recent_workouts %}
+                                <div class="workout-card">
+                                    <div class="workout-card-header">
+                                        <h3>{{ workout.name }}</h3>
+                                        <span class="workout-type">{{ workout.type|capitalize }}</span>
+                                    </div>
+                                    <div class="workout-card-body">
+                                        <div><strong>Duration:</strong> {{ workout.duration }} min</div>
+                                        <div><strong>Difficulty:</strong> {{ workout.difficulty|capitalize or "N/A" }}</div>
+                                        <div><strong>Description:</strong> {{ workout.description or "No description" }}</div>
+                                        <div class="workout-date"><small>Created: {{ workout.created_at.strftime('%Y-%m-%d') }}</small></div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No workouts yet. <a href="{{ url_for('workouts') }}">Create your first workout!</a></p>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('workouts') }}" class="sidebar-button">View All Workouts</a>
                 </div>
                 <div class="main-card">
-                    <h2>Stats</h2>
-                    <p>Your progress and stats will appear here.</p>
+                    <h2>Stats Preview</h2>
+                    <ul class="preview-list">
+                        <li><strong>Total Workouts:</strong> {{ total_workouts }}</li>
+                        <li><strong>Total Exercises:</strong> {{ total_exercises }}</li>
+                        <li><strong>Workouts Completed:</strong> {{ total_workouts_completed }}</li>
+                        <li><strong>Longest Streak:</strong> {{ max_streak }} days</li>
+                        {% if most_recent_workout %}
+                        <li><strong>Most Recent Workout:</strong> {{ most_recent_workout.name }} ({{ most_recent_date.strftime('%Y-%m-%d') }})</li>
+                        {% endif %}
+                    </ul>
+                    <div class="charts-row">
+                        <div class="main-card chart-card">
+                            <h3>Recent Activity (Last 7 Days)</h3>
+                            <canvas id="activityChartPreview"></canvas>
+                        </div>
+                        <div class="main-card chart-card">
+                            <h3>Progression Over Time</h3>
+                            <div class="progression-controls">
+                                <label for="workoutSelectPreview">Workout:</label>
+                                <select id="workoutSelectPreview"></select>
+                                <label for="exerciseSelectPreview">Exercise:</label>
+                                <select id="exerciseSelectPreview"></select>
+                            </div>
+                            <canvas id="progressionChartPreview"></canvas>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('stats') }}" class="sidebar-button">View All Stats</a>
                 </div>
             </div>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script id="activity-labels-preview" type="application/json">{{ activity_labels|tojson }}</script>
+            <script id="activity-data-preview" type="application/json">{{ activity_data|tojson }}</script>
+            <script id="progression-data-preview" type="application/json">{{ progression_data|tojson }}</script>
+            <script id="user-workouts-preview" type="application/json">{{ user_workouts|tojson }}</script>
+            <script>
+            // Parse JSON data from script tags
+            const activityLabelsPreview = JSON.parse(document.getElementById('activity-labels-preview').textContent);
+            const activityDataPreview = JSON.parse(document.getElementById('activity-data-preview').textContent);
+            const progressionDataPreview = JSON.parse(document.getElementById('progression-data-preview').textContent);
+            const userWorkoutsPreview = JSON.parse(document.getElementById('user-workouts-preview').textContent);
+            // Populate workout select for progression chart
+            const workoutSelectPreview = document.getElementById('workoutSelectPreview');
+            const exerciseSelectPreview = document.getElementById('exerciseSelectPreview');
+            workoutSelectPreview.innerHTML = '';
+            userWorkoutsPreview.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.id;
+                opt.textContent = w.name;
+                workoutSelectPreview.appendChild(opt);
+            });
+            // Activity Chart Preview
+            const ctxPreview = document.getElementById('activityChartPreview').getContext('2d');
+            new Chart(ctxPreview, {
+                type: 'bar',
+                data: {
+                    labels: activityLabelsPreview,
+                    datasets: [{
+                        label: 'Workouts Completed',
+                        data: activityDataPreview,
+                        backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                        borderColor: 'rgba(76, 175, 80, 1)',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    aspectRatio: 2,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            // Progression Chart Preview
+            let progressionChartPreview;
+            function updateExerciseOptionsPreview() {
+                const workoutId = workoutSelectPreview.value;
+                exerciseSelectPreview.innerHTML = '';
+                if (progressionDataPreview[workoutId]) {
+                    Object.entries(progressionDataPreview[workoutId]).forEach(([exId, exData]) => {
+                        const opt = document.createElement('option');
+                        opt.value = exId;
+                        opt.textContent = exData.exercise_name;
+                        exerciseSelectPreview.appendChild(opt);
+                    });
+                }
+            }
+            function updateProgressionChartPreview() {
+                const workoutId = workoutSelectPreview.value;
+                const exerciseId = exerciseSelectPreview.value;
+                if (!progressionDataPreview[workoutId] || !progressionDataPreview[workoutId][exerciseId]) return;
+                const exData = progressionDataPreview[workoutId][exerciseId];
+                const labels = exData.labels;
+                const weights = exData.weights;
+                const reps = exData.reps;
+                const ctx2 = document.getElementById('progressionChartPreview').getContext('2d');
+                if (progressionChartPreview) progressionChartPreview.destroy();
+                progressionChartPreview = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Weight (kg)',
+                                data: weights,
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                yAxisID: 'y',
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Reps',
+                                data: reps,
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                yAxisID: 'y1',
+                                tension: 0.3
+                            }
+                        ]
+                    },
+                    options: {
+                        aspectRatio: 2,
+                        maintainAspectRatio: true,
+                        responsive: true,
+                        interaction: { mode: 'index', intersect: false },
+                        stacked: false,
+                        plugins: {
+                            legend: { display: true }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Weight (kg)' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                grid: { drawOnChartArea: false },
+                                title: { display: true, text: 'Reps' }
+                            }
+                        }
+                    }
+                });
+            }
+            workoutSelectPreview.addEventListener('change', () => {
+                updateExerciseOptionsPreview();
+                exerciseSelectPreview.selectedIndex = 0;
+                updateProgressionChartPreview();
+            });
+            exerciseSelectPreview.addEventListener('change', updateProgressionChartPreview);
+            // Initialize
+            updateExerciseOptionsPreview();
+            exerciseSelectPreview.selectedIndex = 0;
+            updateProgressionChartPreview();
+            </script>
         {% elif active_section == 'workouts' %}
             <div class="main-sections center-content">
                 <div class="workout-section">

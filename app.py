@@ -72,7 +72,108 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', username=current_user.username, email=current_user.email, active_section='home', profile_picture=current_user.profile_picture)
+    # Fetch 3 most recent workouts
+    recent_workouts = (
+        Workout.query
+        .filter_by(user_id=current_user.id)
+        .order_by(Workout.created_at.desc())
+        .limit(3)
+        .all()
+    )
+    # Key stats
+    total_workouts = Workout.query.filter_by(user_id=current_user.id).count()
+    total_exercises = Exercise.query.filter_by(user_id=current_user.id).count()
+    total_workouts_completed = WorkoutLog.query.filter_by(user_id=current_user.id).count()
+    # Longest streak calculation
+    completed_logs = WorkoutLog.query.filter_by(user_id=current_user.id).all()
+    all_dates = sorted({log.date_completed for log in completed_logs})
+    max_streak = 0
+    current_streak = 0
+    prev_date = None
+    for d in all_dates:
+        if prev_date and (d - prev_date).days == 1:
+            current_streak += 1
+        else:
+            current_streak = 1
+        max_streak = max(max_streak, current_streak)
+        prev_date = d
+    # Most recent workout completion
+    most_recent_log = (
+        WorkoutLog.query
+        .filter_by(user_id=current_user.id)
+        .order_by(WorkoutLog.date_completed.desc())
+        .first()
+    )
+    most_recent_workout = None
+    most_recent_date = None
+    if most_recent_log:
+        most_recent_workout = Workout.query.get(most_recent_log.workout_id)
+        most_recent_date = most_recent_log.date_completed
+    # --- Chart Data for Preview ---
+    today = date.today()
+    last_7_days = [today - timedelta(days=i) for i in range(6, -1, -1)]
+    activity_last_7 = {d: 0 for d in last_7_days}
+    for log in completed_logs:
+        if log.date_completed in activity_last_7:
+            activity_last_7[log.date_completed] += 1
+    activity_labels = [d.strftime('%a %d %b') for d in last_7_days]
+    activity_data = [activity_last_7[d] for d in last_7_days]
+    # Progression data
+    progression_data = {}
+    user_workouts = Workout.query.filter_by(user_id=current_user.id).all()
+    user_workouts_serialized = [{'id': w.id, 'name': w.name} for w in user_workouts]
+    for workout in user_workouts:
+        workout_logs = (
+            WorkoutLog.query
+            .filter_by(user_id=current_user.id, workout_id=workout.id)
+            .order_by(WorkoutLog.date_completed.asc())
+            .all()
+        )
+        for we in WorkoutExercise.query.filter_by(workout_id=workout.id).all():
+            weight = we.weight or 0
+            reps = we.reps or 0
+            interval = we.progression_interval or 0
+            weight_inc = we.progression_weight_increment or 0
+            reps_inc = we.progression_reps_increment or 0
+            labels = []
+            weights = []
+            reps_list = []
+            for idx, log in enumerate(workout_logs):
+                labels.append(log.date_completed.strftime('%Y-%m-%d'))
+                completed = idx + 1
+                w = weight
+                r = reps
+                if interval and interval > 0:
+                    w += (completed // interval) * weight_inc
+                    r += (completed // interval) * reps_inc
+                weights.append(w)
+                reps_list.append(r)
+            if workout.id not in progression_data:
+                progression_data[workout.id] = {}
+            progression_data[workout.id][we.exercise_id] = {
+                'exercise_name': we.exercise.name,
+                'labels': labels,
+                'weights': weights,
+                'reps': reps_list
+            }
+    return render_template(
+        'dashboard.html',
+        username=current_user.username,
+        email=current_user.email,
+        active_section='home',
+        profile_picture=current_user.profile_picture,
+        recent_workouts=recent_workouts,
+        total_workouts=total_workouts,
+        total_exercises=total_exercises,
+        total_workouts_completed=total_workouts_completed,
+        max_streak=max_streak,
+        most_recent_workout=most_recent_workout,
+        most_recent_date=most_recent_date,
+        activity_labels=activity_labels,
+        activity_data=activity_data,
+        progression_data=progression_data,
+        user_workouts=user_workouts_serialized
+    )
 
 @app.route('/dashboard/workouts')
 @login_required
