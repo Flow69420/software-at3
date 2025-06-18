@@ -41,7 +41,7 @@ body, html {
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.8rem;
 }
 
 .profile-photo {
@@ -80,7 +80,7 @@ body, html {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
 }
 
 .sidebar-button {
