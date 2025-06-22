@@ -161,7 +161,10 @@ def add_exercise_to_workout(workout_id):
             order=form.order.data,
             rest_time=form.rest_time.data,
             weight=form.weight.data,
-            notes=form.notes.data
+            notes=form.notes.data,
+            progression_interval=form.progression_interval.data,
+            progression_weight_increment=form.progression_weight_increment.data,
+            progression_reps_increment=form.progression_reps_increment.data
         )
         db.session.add(new_we)
         db.session.commit()
@@ -222,6 +225,9 @@ def edit_workout_exercise_modal(workout_id, we_id):
         we.rest_time = form.rest_time.data
         we.weight = form.weight.data
         we.notes = form.notes.data
+        we.progression_interval = form.progression_interval.data
+        we.progression_weight_increment = form.progression_weight_increment.data
+        we.progression_reps_increment = form.progression_reps_increment.data
         db.session.commit()
         return '', 204
     return render_template('edit_workout_exercise_modal.html', form=form, we=we)
@@ -346,5 +352,25 @@ def complete_workout(workout_id):
     new_log = WorkoutLog(user_id=current_user.id, workout_id=workout_id, date_completed=today)
     db.session.add(new_log)
     db.session.commit()
-    flash('Workout marked as completed!', 'success')
+
+    # Progression logic
+    from models import WorkoutExercise
+    # Count completions for this workout
+    completion_count = WorkoutLog.query.filter_by(user_id=current_user.id, workout_id=workout_id).count()
+    workout_exercises = WorkoutExercise.query.filter_by(workout_id=workout_id).all()
+    progression_msgs = []
+    for we in workout_exercises:
+        if we.progression_interval and we.progression_interval > 0:
+            if completion_count % we.progression_interval == 0:
+                if we.progression_weight_increment:
+                    we.weight = (we.weight or 0) + we.progression_weight_increment
+                    progression_msgs.append(f"{we.exercise.name}: +{we.progression_weight_increment}kg")
+                if we.progression_reps_increment:
+                    we.reps = (we.reps or 0) + we.progression_reps_increment
+                    progression_msgs.append(f"{we.exercise.name}: +{we.progression_reps_increment} reps")
+    db.session.commit()
+    if progression_msgs:
+        flash('Progression! ' + ' | '.join(progression_msgs), 'success')
+    else:
+        flash('Workout marked as completed!', 'success')
     return redirect(url_for('tracking'))

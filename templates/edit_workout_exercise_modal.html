@@ -9,6 +9,12 @@
         <div>{{ form.rest_time.label }} {{ form.rest_time() }}</div>
         <div>{{ form.weight.label }} {{ form.weight() }}</div>
         <div>{{ form.notes.label }} {{ form.notes() }}</div>
+        <fieldset style="margin-top:1em; border:1px solid #e0e0e0; border-radius:6px; padding:0.5em;">
+            <legend style="font-size:0.95em; color:#666;">Progression (optional)</legend>
+            <div>{{ form.progression_interval.label }} {{ form.progression_interval(size=5) }}</div>
+            <div>{{ form.progression_weight_increment.label }} {{ form.progression_weight_increment(size=5) }}</div>
+            <div>{{ form.progression_reps_increment.label }} {{ form.progression_reps_increment(size=5) }}</div>
+        </fieldset>
         <div>{{ form.submit() }}</div>
     </form>
 </div>

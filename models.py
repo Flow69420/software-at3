@@ -55,6 +55,10 @@ class WorkoutExercise(db.Model):
     reps = db.Column(db.Integer, nullable=False, default=10)
     rest_time = db.Column(db.Integer, nullable=True, default=60)
     weight = db.Column(db.Float, nullable=True, default=0.0)
+    # Progression fields
+    progression_interval = db.Column(db.Integer, nullable=True, default=None)  # e.g. every N completions
+    progression_weight_increment = db.Column(db.Float, nullable=True, default=None)  # e.g. add X kg
+    progression_reps_increment = db.Column(db.Integer, nullable=True, default=None)  # e.g. add Y reps
     notes = db.Column(db.String(256), nullable=True)
     workout = db.relationship('Workout', backref=db.backref('workout_exercises', lazy=True))
     exercise = db.relationship('Exercise', backref=db.backref('workout_exercises', lazy=True))

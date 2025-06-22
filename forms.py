@@ -45,6 +45,10 @@ class AddExerciseToWorkoutForm(FlaskForm):
     rest_time = IntegerField('Rest Time (seconds)', validators=[])
     weight = IntegerField('Weight (kg)', validators=[])
     notes = TextAreaField('Notes', validators=[Length(max=256)])
+    # Progression fields
+    progression_interval = IntegerField('Progression Interval (completions)', validators=[])
+    progression_weight_increment = IntegerField('Weight Increment (kg)', validators=[])
+    progression_reps_increment = IntegerField('Reps Increment', validators=[])
     submit = SubmitField('Add to Workout')
 
 class EditWorkoutExerciseForm(FlaskForm):
@@ -54,4 +58,8 @@ class EditWorkoutExerciseForm(FlaskForm):
     rest_time = IntegerField('Rest Time (seconds)', validators=[])
     weight = IntegerField('Weight (kg)', validators=[])
     notes = TextAreaField('Notes', validators=[Length(max=256)])
+    # Progression fields
+    progression_interval = IntegerField('Progression Interval (completions)', validators=[])
+    progression_weight_increment = IntegerField('Weight Increment (kg)', validators=[])
+    progression_reps_increment = IntegerField('Reps Increment', validators=[])
     submit = SubmitField('Update')
