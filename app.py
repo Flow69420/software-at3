@@ -374,3 +374,118 @@ def complete_workout(workout_id):
     else:
         flash('Workout marked as completed!', 'success')
     return redirect(url_for('tracking'))
+
+@app.route('/dashboard/stats')
+@login_required
+def stats():
+    from models import WorkoutLog, Workout, Exercise, WorkoutExercise
+    user_id = current_user.id
+    # Total workouts completed
+    total_workouts_completed = WorkoutLog.query.filter_by(user_id=user_id).count()
+    # Total unique workouts
+    total_unique_workouts = WorkoutLog.query.filter_by(user_id=user_id).distinct(WorkoutLog.workout_id).count()
+    # Total exercises completed (sum of all exercises in completed workouts)
+    completed_logs = WorkoutLog.query.filter_by(user_id=user_id).all()
+    workout_ids = [log.workout_id for log in completed_logs]
+    total_exercises_completed = WorkoutExercise.query.filter(WorkoutExercise.workout_id.in_(workout_ids)).count() if workout_ids else 0
+    # Most performed workout
+    from sqlalchemy import func
+    most_performed = (
+        db.session.query(WorkoutLog.workout_id, func.count(WorkoutLog.id).label('cnt'))
+        .filter_by(user_id=user_id)
+        .group_by(WorkoutLog.workout_id)
+        .order_by(db.desc('cnt'))
+        .first()
+    )
+    most_performed_workout = None
+    most_performed_count = 0
+    if most_performed:
+        most_performed_workout = Workout.query.get(most_performed.workout_id)
+        most_performed_count = most_performed.cnt
+    # Streak: most consecutive days with a workout
+    all_dates = sorted({log.date_completed for log in completed_logs})
+    max_streak = 0
+    current_streak = 0
+    prev_date = None
+    for d in all_dates:
+        if prev_date and (d - prev_date).days == 1:
+            current_streak += 1
+        else:
+            current_streak = 1
+        max_streak = max(max_streak, current_streak)
+        prev_date = d
+    # Recent activity (last 7 days)
+    from datetime import date, timedelta
+    today = date.today()
+    last_7_days = [today - timedelta(days=i) for i in range(6, -1, -1)]  # oldest to newest
+    activity_last_7 = {d: 0 for d in last_7_days}
+    for log in completed_logs:
+        if log.date_completed in activity_last_7:
+            activity_last_7[log.date_completed] += 1
+    # Prepare labels and data for Chart.js
+    activity_labels = [d.strftime('%a %d %b') for d in last_7_days]
+    activity_data = [activity_last_7[d] for d in last_7_days]
+    # --- Progression Data for Line Chart ---
+    # For each workout, get all exercises and their progression over time
+    # We'll build: {workout_id: {exercise_id: {labels: [dates], weights: [...], reps: [...]}}}
+    progression_data = {}
+    user_workouts = Workout.query.filter_by(user_id=user_id).all()
+    # Serialize workouts for dropdowns (id and name only)
+    user_workouts_serialized = [{'id': w.id, 'name': w.name} for w in user_workouts]
+    for workout in user_workouts:
+        workout_logs = (
+            WorkoutLog.query
+            .filter_by(user_id=user_id, workout_id=workout.id)
+            .order_by(WorkoutLog.date_completed.asc())
+            .all()
+        )
+        # For each exercise in this workout
+        for we in WorkoutExercise.query.filter_by(workout_id=workout.id).all():
+            # Start with initial values
+            weight = we.weight or 0
+            reps = we.reps or 0
+            interval = we.progression_interval or 0
+            weight_inc = we.progression_weight_increment or 0
+            reps_inc = we.progression_reps_increment or 0
+            # Build progression timeline
+            labels = []
+            weights = []
+            reps_list = []
+            for idx, log in enumerate(workout_logs):
+                labels.append(log.date_completed.strftime('%Y-%m-%d'))
+                # Calculate progression up to this log
+                completed = idx + 1
+                w = weight
+                r = reps
+                if interval and interval > 0:
+                    w += (completed // interval) * weight_inc
+                    r += (completed // interval) * reps_inc
+                weights.append(w)
+                reps_list.append(r)
+            if workout.id not in progression_data:
+                progression_data[workout.id] = {}
+            progression_data[workout.id][we.exercise_id] = {
+                'exercise_name': we.exercise.name,
+                'labels': labels,
+                'weights': weights,
+                'reps': reps_list
+            }
+    return render_template(
+        'stats.html',
+        username=current_user.username,
+        email=current_user.email,
+        profile_picture=current_user.profile_picture,
+        total_workouts_completed=total_workouts_completed,
+        total_unique_workouts=total_unique_workouts,
+        total_exercises_completed=total_exercises_completed,
+        most_performed_workout=most_performed_workout,
+        most_performed_count=most_performed_count,
+        max_streak=max_streak,
+        activity_labels=activity_labels,
+        activity_data=activity_data,
+        today=today,
+        progression_data=progression_data,
+        user_workouts=user_workouts_serialized,
+        active_section='stats',
+        selected_type=None
+    )

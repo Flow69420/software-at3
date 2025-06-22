@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block stylesheet %}<link rel="stylesheet" href="/static/css/dash.css">{% endblock %}
+{% block title %}Stats{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <div class="sidebar">
+        <div class="sidebar-island">
+            <div class="profile-section">
+                <img src="{{ url_for('static', filename='assets/' + (profile_picture or 'placeholder.256x256.png')) }}" alt="Profile Photo" class="profile-photo">
+                <div class="profile-info">
+                    <div class="profile-name">{{ username }}</div>
+                    <div class="profile-email">{{ email }}</div>
+                </div>
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-buttons">
+                <div class="sidebar-dropdown">
+                    {% if active_section == 'workouts' %}
+                        <div class="sidebar-button dropdown-toggle active" onclick="toggleDropdown()" id="workoutsSidebarBtn">
+                            Workouts
+                        </div>
+                        <div class="dropdown-menu open" id="workoutDropdown">
+                            <a href="{{ url_for('workouts') }}"
+                               class="dropdown-item{% if not selected_type %} selected{% endif %}"
+                               onclick="selectDropdown(event, this)">All</a>
+                            <a href="{{ url_for('workouts', type='strength') }}"
+                               class="dropdown-item{% if selected_type == 'strength' %} selected{% endif %}"
+                               onclick="selectDropdown(event, this)">Strength</a>
+                            <a href="{{ url_for('workouts', type='cardio') }}"
+                               class="dropdown-item{% if selected_type == 'cardio' %} selected{% endif %}"
+                               onclick="selectDropdown(event, this)">Cardio</a>
+                            <a href="{{ url_for('workouts', type='flexibility') }}"
+                               class="dropdown-item{% if selected_type == 'flexibility' %} selected{% endif %}"
+                               onclick="selectDropdown(event, this)">Flexibility</a>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('workouts') }}" class="sidebar-button" id="workoutsSidebarBtn">Workouts</a>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('dashboard') }}" class="sidebar-button{% if active_section == 'home' %} active{% endif %}">Home</a>
+                <a href="{{ url_for('tracking') }}" class="sidebar-button{% if active_section == 'tracking' %} active{% endif %}">Tracking</a>
+                <a href="{{ url_for('stats') }}" class="sidebar-button{% if active_section == 'stats' %} active{% endif %}">Stats</a>
+                <a href="{{ url_for('profile') }}" class="sidebar-button{% if active_section == 'profile' %} active{% endif %}">Profile</a>
+                <a href="{{ url_for('logout') }}" class="sidebar-button logout-button">Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <h1>Stats</h1>
+        <div class="main-sections stats-grid">
+            <div class="main-card">
+                <h2>Totals</h2>
+                <ul>
+                    <li><strong>Total Workouts Completed:</strong> {{ total_workouts_completed }}</li>
+                    <li><strong>Unique Workouts Completed:</strong> {{ total_unique_workouts }}</li>
+                    <li><strong>Total Exercises Completed:</strong> {{ total_exercises_completed }}</li>
+                    <li><strong>Longest Streak:</strong> {{ max_streak }} days</li>
+                </ul>
+            </div>
+            <div class="main-card">
+                <h2>Most Performed Workout</h2>
+                {% if most_performed_workout %}
+                    <p><strong>{{ most_performed_workout.name }}</strong> ({{ most_performed_count }} times)</p>
+                {% else %}
+                    <p>No workouts completed yet.</p>
+                {% endif %}
+            </div>
+            <div class="main-card chart-card">
+                <h2>Recent Activity (Last 7 Days)</h2>
+                <canvas id="activityChart"></canvas>
+            </div>
+            <div class="main-card chart-card">
+                <h2>Progression Over Time</h2>
+                <div class="progression-controls">
+                    <label for="workoutSelect">Workout:</label>
+                    <select id="workoutSelect">
+                        {% for workout in user_workouts %}
+                            <option value="{{ workout.id }}">{{ workout.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="exerciseSelect">Exercise:</label>
+                    <select id="exerciseSelect"></select>
+                </div>
+                <canvas id="progressionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const activityLabels = {{ activity_labels|tojson }};
+const activityData = {{ activity_data|tojson }};
+const ctx = document.getElementById('activityChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: activityLabels,
+        datasets: [{
+            label: 'Workouts Completed',
+            data: activityData,
+            backgroundColor: 'rgba(76, 175, 80, 0.7)',
+            borderColor: 'rgba(76, 175, 80, 1)',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        aspectRatio: 2,
+        maintainAspectRatio: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1 }
+            }
+        },
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+
+// --- Progression Chart Logic ---
+const progressionData = {{ progression_data|tojson }};
+const userWorkouts = {{ user_workouts|tojson }};
+const workoutSelect = document.getElementById('workoutSelect');
+const exerciseSelect = document.getElementById('exerciseSelect');
+let progressionChart;
+
+function updateExerciseOptions() {
+    const workoutId = workoutSelect.value;
+    exerciseSelect.innerHTML = '';
+    if (progressionData[workoutId]) {
+        Object.entries(progressionData[workoutId]).forEach(([exId, exData]) => {
+            const opt = document.createElement('option');
+            opt.value = exId;
+            opt.textContent = exData.exercise_name;
+            exerciseSelect.appendChild(opt);
+        });
+    }
+}
+
+function updateProgressionChart() {
+    const workoutId = workoutSelect.value;
+    const exerciseId = exerciseSelect.value;
+    if (!progressionData[workoutId] || !progressionData[workoutId][exerciseId]) return;
+    const exData = progressionData[workoutId][exerciseId];
+    const labels = exData.labels;
+    const weights = exData.weights;
+    const reps = exData.reps;
+    const ctx2 = document.getElementById('progressionChart').getContext('2d');
+    if (progressionChart) progressionChart.destroy();
+    progressionChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Weight (kg)',
+                    data: weights,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    yAxisID: 'y',
+                    tension: 0.3
+                },
+                {
+                    label: 'Reps',
+                    data: reps,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    yAxisID: 'y1',
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            aspectRatio: 2,
+            maintainAspectRatio: true,
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            stacked: false,
+            plugins: {
+                legend: { display: true }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: { display: true, text: 'Weight (kg)' }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    grid: { drawOnChartArea: false },
+                    title: { display: true, text: 'Reps' }
+                }
+            }
+        }
+    });
+}
+
+workoutSelect.addEventListener('change', () => {
+    updateExerciseOptions();
+    exerciseSelect.selectedIndex = 0;
+    updateProgressionChart();
+});
+exerciseSelect.addEventListener('change', updateProgressionChart);
+// Initialize
+updateExerciseOptions();
+exerciseSelect.selectedIndex = 0;
+updateProgressionChart();
+</script>
+{% endblock %}
